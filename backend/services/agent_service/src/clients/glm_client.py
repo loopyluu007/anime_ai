@@ -1,14 +1,22 @@
 import httpx
-import os
 from typing import Dict, Any, Optional
 import json
 
 class GLMClient:
     """智谱 GLM API 客户端"""
     
-    def __init__(self):
+    def __init__(self, api_key: str):
+        """
+        初始化客户端
+        
+        Args:
+            api_key: 用户提供的GLM API密钥
+        """
+        if not api_key:
+            raise ValueError("GLM API密钥不能为空")
+        
         self.base_url = "https://open.bigmodel.cn/api/paas/v4"
-        self.api_key = os.getenv("GLM_API_KEY")
+        self.api_key = api_key
         self.client = httpx.AsyncClient(
             base_url=self.base_url,
             timeout=60.0,

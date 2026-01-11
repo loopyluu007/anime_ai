@@ -15,6 +15,10 @@ class User(Base):
     avatar_url = Column(Text)
     is_active = Column(Boolean, default=True)
     is_admin = Column(Boolean, default=False)
+    # 新增：API密钥字段（明文存储）
+    glm_api_key = Column(Text, nullable=True)
+    tuzi_api_key = Column(Text, nullable=True)
+    gemini_api_key = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     

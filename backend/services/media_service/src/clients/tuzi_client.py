@@ -1,14 +1,22 @@
 import httpx
-import os
 from typing import Dict, Any, Optional
 import asyncio
 
 class TuziClient:
     """Tuzi API 客户端（视频生成）"""
     
-    def __init__(self):
+    def __init__(self, api_key: str):
+        """
+        初始化客户端
+        
+        Args:
+            api_key: 用户提供的Tuzi API密钥
+        """
+        if not api_key:
+            raise ValueError("Tuzi API密钥不能为空")
+        
         self.base_url = "https://api.ourzhishi.top"
-        self.api_key = os.getenv("TUZI_API_KEY")
+        self.api_key = api_key
         self.client = httpx.AsyncClient(
             base_url=self.base_url,
             timeout=300.0,

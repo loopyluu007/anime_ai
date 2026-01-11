@@ -6,6 +6,10 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,
     avatar_url TEXT,
     is_active BOOLEAN DEFAULT true,
+    -- API密钥字段（用户自行配置）
+    glm_api_key TEXT,
+    tuzi_api_key TEXT,
+    gemini_api_key TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

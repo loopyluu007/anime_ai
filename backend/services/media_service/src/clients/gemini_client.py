@@ -1,13 +1,21 @@
 import httpx
-import os
 from typing import Dict, Any, Optional, List
 
 class GeminiClient:
     """Gemini API 客户端（图片生成）"""
     
-    def __init__(self):
+    def __init__(self, api_key: str):
+        """
+        初始化客户端
+        
+        Args:
+            api_key: 用户提供的Gemini API密钥
+        """
+        if not api_key:
+            raise ValueError("Gemini API密钥不能为空")
+        
         self.base_url = "https://api.ourzhishi.top"
-        self.api_key = os.getenv("GEMINI_API_KEY")
+        self.api_key = api_key
         self.client = httpx.AsyncClient(
             base_url=self.base_url,
             timeout=120.0,

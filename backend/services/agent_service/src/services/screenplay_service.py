@@ -14,14 +14,15 @@ from shared.models.db_models import Screenplay, Scene, CharacterSheet, Task
 from shared.models.screenplay import ScreenplayStatus, SceneStatus
 from services.agent_service.src.clients.glm_client import GLMClient
 from services.agent_service.src.services.task_service import TaskService, TaskStatus
+from services.data_service.src.services.user_service import UserService
 
 class ScreenplayService:
     """剧本服务"""
     
     def __init__(self, db: Session):
         self.db = db
-        self.glm_client = GLMClient()
         self.task_service = TaskService(db)
+        self.user_service = UserService(db)
     
     async def create_draft(
         self,
@@ -42,13 +43,24 @@ class ScreenplayService:
         if not task:
             raise ValueError("任务不存在")
         
-        # 调用GLM客户端生成剧本
-        screenplay_data = await self.glm_client.generate_screenplay(
-            user_prompt=prompt,
-            user_images=user_images,
-            scene_count=scene_count,
-            character_count=character_count
-        )
+        # 获取用户的GLM API密钥
+        glm_api_key = self.user_service.get_user_api_key(user_id, "glm")
+        if not glm_api_key:
+            raise ValueError("用户未配置GLM API密钥，请先在设置中配置")
+        
+        # 使用用户密钥创建客户端
+        glm_client = GLMClient(api_key=glm_api_key)
+        
+        try:
+            # 调用GLM客户端生成剧本
+            screenplay_data = await glm_client.generate_screenplay(
+                user_prompt=prompt,
+                user_images=user_images,
+                scene_count=scene_count,
+                character_count=character_count
+            )
+        finally:
+            await glm_client.close()
         
         # 创建剧本记录
         screenplay = Screenplay(

@@ -15,6 +15,7 @@ sys.path.insert(0, str(backend_path))
 from shared.models.db_models import Task, MediaFile
 from shared.models.task import TaskStatus, TaskType
 from services.media_service.src.clients.gemini_client import GeminiClient
+from services.data_service.src.services.user_service import UserService
 
 
 class ImageService:
@@ -22,7 +23,7 @@ class ImageService:
     
     def __init__(self, db: Session):
         self.db = db
-        self.gemini_client = GeminiClient()
+        self.user_service = UserService(db)
     
     def create_image_task(
         self,
