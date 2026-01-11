@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- 基础配置 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI漫导 - AI 智能体驱动的短剧制作平台">
+  <meta name="keywords" content="AI,视频生成,剧本,短剧,AI漫导">
+  <title>AI漫导</title>
+  
+  <!-- PWA 配置 -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#8B5CF6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AI漫导">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://directorai.com/">
+  <meta property="og:title" content="AI漫导">
+  <meta property="og:description" content="AI 智能体驱动的短剧制作平台">
+  <meta property="og:image" content="icons/icon-512.png">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://directorai.com/">
+  <meta property="twitter:title" content="AI漫导">
+  <meta property="twitter:description" content="AI 智能体驱动的短剧制作平台">
+  <meta property="twitter:image" content="icons/icon-512.png">
+  
+  <!-- 预加载关键资源 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <style>
+    /* 加载动画 */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #FFFFFF;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+    }
+    
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #8B5CF6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      margin-top: 20px;
+      color: #666;
+      font-size: 16px;
+    }
+    
+    /* 隐藏加载动画当 Flutter 应用加载完成后 */
+    .loading-hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- 加载动画 -->
+  <div id="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">正在加载 AI漫导...</div>
+  </div>
+  
+  <!-- Flutter Web 应用容器 -->
+  <script>
+    // 当页面加载完成后初始化 Flutter 应用
+    window.addEventListener('load', function(ev) {
+      // 隐藏加载动画
+      const loading = document.getElementById('loading');
+      if (loading) {
+        loading.classList.add('loading-hidden');
+      }
+      
+      // 加载 Flutter Web 应用
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.initializeEngine().then(function(appRunner) {
+            appRunner.runApp();
+          });
+        }
+      });
+    });
+    
+    // Service Worker 注册
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/flutter_service_worker.js?v=' + serviceWorkerVersion)
+          .then(function(registration) {
+            console.log('ServiceWorker 注册成功:', registration.scope);
+          })
+          .catch(function(error) {
+            console.log('ServiceWorker 注册失败:', error);
+          });
+      });
+    }
+  </script>
+</body>
+</html>

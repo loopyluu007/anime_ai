@@ -1,0 +1,16 @@
+# pytest缓存
+.pytest_cache/
+__pycache__/
+*.pyc
+*.pyo
+
+# 覆盖率报告
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# 测试数据库
+*.db
+*.sqlite
+*.sqlite3
