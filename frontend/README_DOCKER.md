@@ -23,9 +23,10 @@
 ### 快速启动
 
 ```bash
+# 在项目根目录执行
+
 # 使用 Docker Compose（推荐）
-cd frontend
-docker-compose up -d
+docker-compose -f frontend/docker-compose.yml up -d
 
 # 或使用 Docker 命令
 docker build -t director-ai-frontend -f frontend/Dockerfile .
@@ -106,26 +107,29 @@ docker run -d \
 ### 使用 Docker Compose（推荐）
 
 ```bash
-cd frontend
-docker-compose up -d
+# 在项目根目录执行
+docker-compose -f frontend/docker-compose.yml up -d
 ```
 
 ### 查看日志
 
 ```bash
-docker-compose logs -f frontend
+# 在项目根目录执行
+docker-compose -f frontend/docker-compose.yml logs -f frontend
 ```
 
 ### 停止服务
 
 ```bash
-docker-compose down
+# 在项目根目录执行
+docker-compose -f frontend/docker-compose.yml down
 ```
 
 ### 重新构建
 
 ```bash
-docker-compose up -d --build
+# 在项目根目录执行
+docker-compose -f frontend/docker-compose.yml up -d --build
 ```
 
 ---
