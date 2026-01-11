@@ -110,7 +110,6 @@ api_gateway/
 | `/api/v1/images` | Media Service | 图片生成 |
 | `/api/v1/videos` | Media Service | 视频生成 |
 | `/api/v1/users` | Data Service | 用户管理 |
-| `/api/v1/analytics` | Data Service | 数据分析 |
 
 ### 公开路径（无需认证）
 

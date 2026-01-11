@@ -1,1 +1,4 @@
-{}
+{
+  "tests/unit/gateway/test_api_gateway.py": true,
+  "tests/integration/api/test_conversations_api.py::TestConversationsAPI::test_create_conversation_success": true
+}

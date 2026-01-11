@@ -80,7 +80,6 @@ class Settings(BaseSettings):
             "/api/v1/images": self.MEDIA_SERVICE_URL,
             "/api/v1/videos": self.MEDIA_SERVICE_URL,
             "/api/v1/users": self.DATA_SERVICE_URL,
-            "/api/v1/analytics": self.DATA_SERVICE_URL,
         }
     
     def get_websocket_routes(self) -> Dict[str, str]:

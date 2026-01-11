@@ -1,6 +1,6 @@
 # Data Service
 
-AI漫导数据服务，提供用户数据管理和统计分析功能。
+AI漫导数据服务，提供用户数据管理功能。
 
 ## 功能
 
@@ -8,12 +8,6 @@ AI漫导数据服务，提供用户数据管理和统计分析功能。
   - 获取用户详细信息
   - 更新用户信息（用户名、头像）
   - 获取用户统计数据
-
-- **数据分析**
-  - 系统概览统计
-  - 任务统计分析
-  - 对话统计分析
-  - 媒体文件统计分析
 
 ## 启动服务
 
@@ -44,13 +38,6 @@ uvicorn src.main:app --reload --port 8003
 - `GET /api/v1/users/{user_id}` - 获取用户信息
 - `PUT /api/v1/users/{user_id}` - 更新用户信息
 - `GET /api/v1/users/{user_id}/stats` - 获取用户统计
-
-### 数据分析
-
-- `GET /api/v1/analytics/overview` - 系统概览
-- `GET /api/v1/analytics/tasks` - 任务分析
-- `GET /api/v1/analytics/conversations` - 对话分析
-- `GET /api/v1/analytics/media` - 媒体分析
 
 ## 环境变量
 

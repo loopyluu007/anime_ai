@@ -1,7 +1,7 @@
 # 后端开发施工文档
 
-> **版本**: v1.3  
-> **最后更新**: 2026-01-13（晚上）  
+> **版本**: v1.4  
+> **最后更新**: 2026-01-14（晚上）  
 > **维护者**: 开发团队
 
 ---
@@ -159,11 +159,9 @@ backend/
 │       ├── src/
 │       │   ├── main.py      # 服务入口 ✅
 │       │   ├── api/         # API路由
-│       │   │   ├── users.py           # 用户数据API ✅
-│       │   │   └── analytics.py      # 数据分析API ✅
+│       │   │   └── users.py           # 用户数据API ✅
 │       │   ├── services/    # 业务逻辑
-│       │   │   ├── user_service.py           # 用户服务 ✅
-│       │   │   └── analytics_service.py      # 分析服务 ✅
+│       │   │   └── user_service.py           # 用户服务 ✅
 │       │   └── repositories/ # 数据访问层
 │       │       ├── user_repository.py        # 用户数据访问 ✅
 │       │       ├── conversation_repository.py # 对话数据访问 ✅
@@ -309,9 +307,7 @@ class ExampleService:
 | 模块 | 状态 | 说明 |
 |------|------|------|
 | 用户数据API | ✅ | 获取、更新用户信息、用户统计 |
-| 数据分析API | ✅ | 系统概览、任务分析、对话分析、媒体分析 |
 | 数据访问层 | ✅ | 用户、对话、任务数据访问 |
-| 分析服务 | ✅ | 统计分析服务 |
 
 ### 第三方客户端
 
@@ -453,7 +449,6 @@ pytest --cov=services --cov=shared --cov-report=html
 | 剧本服务 | 11 | ✅ 完成 |
 | 媒体服务 | 16 | ✅ 完成 |
 | 消息服务 | 0 | ⏳ 待补充 |
-| 数据分析服务 | 0 | ⏳ 待补充 |
 
 详细测试文档请参考：[tests/README.md](./tests/README.md)
 
@@ -584,9 +579,18 @@ pytest --cov=services --cov=shared --cov-report=html
 
 - ✅ 实现Data Service（数据服务）
   - 实现用户数据API（获取、更新用户信息、用户统计）
-  - 实现数据分析API（系统概览、任务分析、对话分析、媒体分析）
   - 实现数据访问层（UserRepository、ConversationRepository、TaskRepository）
-  - 实现服务层（UserService、AnalyticsService）
+  - 实现服务层（UserService）
+
+### 2026-01-14（晚上）
+- ✅ **删除数据分析功能**
+  - 删除后端数据分析API文件（analytics.py）
+  - 删除后端数据分析服务文件（analytics_service.py）
+  - 删除数据分析测试文件（test_analytics_service.py）
+  - 更新data_service/main.py移除analytics导入和路由
+  - 更新API Gateway配置移除analytics路由
+  - 更新所有相关文档
+  - **说明**: 根据需求，完全移除数据分析功能
 
 ### 2025-01-12
 
@@ -606,6 +610,6 @@ pytest --cov=services --cov=shared --cov-report=html
 
 ---
 
-**文档版本**: v1.2  
-**最后更新**: 2026-01-12  
+**文档版本**: v1.4  
+**最后更新**: 2026-01-14（晚上）  
 **维护者**: 开发团队

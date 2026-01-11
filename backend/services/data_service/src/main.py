@@ -10,11 +10,11 @@ from pathlib import Path
 backend_path = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(backend_path))
 
-from services.data_service.src.api import users, analytics
+from services.data_service.src.api import users
 
 app = FastAPI(
     title="AI漫导 Data Service",
-    description="数据服务API（用户数据、统计分析）",
+    description="数据服务API（用户数据管理）",
     version="1.0.0"
 )
 
@@ -29,7 +29,6 @@ app.add_middleware(
 
 # 注册路由
 app.include_router(users.router, prefix="/api/v1")
-app.include_router(analytics.router, prefix="/api/v1")
 
 @app.get("/")
 async def root():

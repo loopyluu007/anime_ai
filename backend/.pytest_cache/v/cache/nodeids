@@ -1,4 +1,5 @@
 [
+  "tests/integration/api/test_conversations_api.py::TestConversationsAPI::test_create_conversation_success",
   "tests/unit/services/test_analytics_service.py::TestAnalyticsService::test_get_conversation_analytics_no_data",
   "tests/unit/services/test_analytics_service.py::TestAnalyticsService::test_get_conversation_analytics_with_data",
   "tests/unit/services/test_analytics_service.py::TestAnalyticsService::test_get_conversation_analytics_with_days",
