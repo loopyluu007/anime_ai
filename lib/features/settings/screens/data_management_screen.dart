@@ -8,6 +8,7 @@ import '../widgets/settings_tile.dart';
 
 // 条件导入：移动端使用 path_provider 和 dart:io
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 import 'dart:io' if (dart.library.html) 'dart:html' as io;
 
 /// 数据管理页面
@@ -67,7 +68,8 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
       if (await cacheDir.exists()) {
         await for (final entity in cacheDir.list(recursive: true)) {
           if (entity is io.File) {
-            totalSize += await entity.length();
+            final length = await entity.length();
+            totalSize += length.toInt();
           }
         }
       }
@@ -92,7 +94,7 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
       }
       
       final appDir = await getApplicationDocumentsDirectory();
-      final hiveDir = io.Directory('${appDir.path}/hive_db');
+      final hiveDir = io.Directory(path.join(appDir.path, 'hive_db'));
       
       if (!await hiveDir.exists()) {
         return 0;
@@ -101,7 +103,8 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
       int totalSize = 0;
       await for (final entity in hiveDir.list(recursive: true)) {
         if (entity is io.File) {
-          totalSize += await entity.length();
+          final length = await entity.length();
+          totalSize += length.toInt();
         }
       }
 

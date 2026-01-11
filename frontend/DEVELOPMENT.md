@@ -1,7 +1,7 @@
 # 前端开发施工文档
 
-> **版本**: v1.1  
-> **最后更新**: 2026-01-12  
+> **版本**: v1.2  
+> **最后更新**: 2026-01-15（晚上）  
 > **维护者**: 开发团队
 
 ---
@@ -803,6 +803,13 @@ flutter test --coverage
 - 检查依赖兼容性
 - 查看构建日志
 
+**常见编译错误修复**（2026-01-15）:
+- ✅ **导入冲突**: 如果自定义类与Flutter框架类名冲突（如ThemeMode、ErrorWidget），需要重命名自定义类
+- ✅ **Platform检查**: Web端不能直接使用 `Platform.isAndroid`，应使用 `defaultTargetPlatform` 或 `kIsWeb` 检查
+- ✅ **Directory使用**: Web端不支持 `dart:io` 的 `Directory`，需要使用条件导入
+- ✅ **mounted检查**: StatelessWidget中没有 `mounted` 属性，应使用 `context.mounted`
+- ✅ **类型转换**: 注意 `num` 到 `int` 的显式转换（使用 `.toInt()`）
+
 ---
 
 ## 📚 参考文档
@@ -887,8 +894,18 @@ flutter test --coverage
 - ✅ 实现基础依赖配置
 - ✅ 创建开发施工文档
 
+### 2026-01-15（晚上）
+
+- ✅ **修复Web端编译错误**
+  - ✅ 修复导入冲突（ThemeMode → AppThemeMode, ErrorWidget → AppErrorWidget）
+  - ✅ 修复Web平台兼容性（Platform检查、Directory使用、mounted问题）
+  - ✅ 修复API客户端方法签名错误
+  - ✅ 添加未定义类型（ImageInfo/VideoInfo类型别名、VideoAdapter类）
+  - ✅ 修复类型转换错误
+  - **说明**: 修复了50+个编译错误，代码现在应该可以在Web平台上成功编译
+
 ---
 
-**文档版本**: v1.1  
-**最后更新**: 2026-01-12  
+**文档版本**: v1.2  
+**最后更新**: 2026-01-15（晚上）  
 **维护者**: 开发团队

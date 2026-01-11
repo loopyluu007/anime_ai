@@ -7,6 +7,12 @@ import 'api_client.dart';
 import '../config/api_config.dart';
 import 'conversation_client.dart' show PaginatedResponse;
 
+/// 图片信息类型别名
+typedef ImageInfo = MediaFile;
+
+/// 视频信息类型别名
+typedef VideoInfo = MediaFile;
+
 /// 媒体文件信息
 class MediaFile {
   final String id;
@@ -252,5 +258,41 @@ class MediaClient {
   /// [id] 文件ID
   Future<void> deleteMediaFile(String id) async {
     await _apiClient.delete('/media/files/$id');
+  }
+
+  /// 获取图片列表
+  /// 
+  /// [page] 页码
+  /// [pageSize] 每页数量
+  Future<PaginatedResponse<ImageInfo>> getImages({
+    int page = 1,
+    int pageSize = 20,
+  }) async {
+    return getMediaFiles(page: page, pageSize: pageSize, type: 'image');
+  }
+
+  /// 获取视频列表
+  /// 
+  /// [page] 页码
+  /// [pageSize] 每页数量
+  Future<PaginatedResponse<VideoInfo>> getVideos({
+    int page = 1,
+    int pageSize = 20,
+  }) async {
+    return getMediaFiles(page: page, pageSize: pageSize, type: 'video');
+  }
+
+  /// 删除图片
+  /// 
+  /// [id] 图片ID
+  Future<void> deleteImage(String id) async {
+    await deleteMediaFile(id);
+  }
+
+  /// 删除视频
+  /// 
+  /// [id] 视频ID
+  Future<void> deleteVideo(String id) async {
+    await deleteMediaFile(id);
   }
 }

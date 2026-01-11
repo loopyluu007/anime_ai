@@ -4,7 +4,7 @@ import '../../../core/storage/local_storage.dart';
 import '../../../shared/themes/app_theme.dart';
 
 /// 主题模式
-enum ThemeMode {
+enum AppThemeMode {
   light,
   dark,
   system,
@@ -25,7 +25,7 @@ class SettingsProvider extends ChangeNotifier {
   static const String _autoPlayVideoKey = 'auto_play_video';
   static const String _cacheEnabledKey = 'cache_enabled';
 
-  ThemeMode _themeMode = ThemeMode.system;
+  AppThemeMode _themeMode = AppThemeMode.system;
   AppLanguage _language = AppLanguage.system;
   bool _notificationEnabled = true;
   bool _autoPlayVideo = false;
@@ -34,7 +34,7 @@ class SettingsProvider extends ChangeNotifier {
   bool _isInitialized = false;
 
   /// 主题模式
-  ThemeMode get themeMode => _themeMode;
+  AppThemeMode get themeMode => _themeMode;
 
   /// 语言设置
   AppLanguage get language => _language;
@@ -56,7 +56,7 @@ class SettingsProvider extends ChangeNotifier {
       // 加载主题设置
       final themeModeIndex = await LocalStorage.getInt(_themeModeKey);
       if (themeModeIndex != null) {
-        _themeMode = ThemeMode.values[themeModeIndex];
+        _themeMode = AppThemeMode.values[themeModeIndex];
       }
 
       // 加载语言设置
@@ -82,7 +82,7 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   /// 设置主题模式
-  Future<void> setThemeMode(ThemeMode mode) async {
+  Future<void> setThemeMode(AppThemeMode mode) async {
     if (_themeMode == mode) return;
 
     _themeMode = mode;
@@ -129,11 +129,11 @@ class SettingsProvider extends ChangeNotifier {
   /// 获取当前主题
   ThemeData getCurrentTheme() {
     switch (_themeMode) {
-      case ThemeMode.light:
+      case AppThemeMode.light:
         return AppTheme.lightTheme;
-      case ThemeMode.dark:
+      case AppThemeMode.dark:
         return AppTheme.darkTheme;
-      case ThemeMode.system:
+      case AppThemeMode.system:
         return AppTheme.lightTheme; // 默认浅色主题
     }
   }
@@ -141,11 +141,11 @@ class SettingsProvider extends ChangeNotifier {
   /// 获取主题模式对应的 Material ThemeMode
   ThemeMode getMaterialThemeMode() {
     switch (_themeMode) {
-      case ThemeMode.light:
+      case AppThemeMode.light:
         return ThemeMode.light;
-      case ThemeMode.dark:
+      case AppThemeMode.dark:
         return ThemeMode.dark;
-      case ThemeMode.system:
+      case AppThemeMode.system:
         return ThemeMode.system;
     }
   }

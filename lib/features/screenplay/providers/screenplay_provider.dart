@@ -72,7 +72,7 @@ class ScreenplayProvider extends ChangeNotifier {
     try {
       _currentScreenplay = await _client.updateScreenplay(
         screenplayId,
-        title: title,
+        {'title': title},
       );
       return _currentScreenplay!;
     } catch (e) {
@@ -91,7 +91,13 @@ class ScreenplayProvider extends ChangeNotifier {
     notifyListeners();
     
     try {
-      _currentScreenplay = await _client.createDraft(request);
+      _currentScreenplay = await _client.createDraft(
+        taskId: request.taskId,
+        prompt: request.prompt,
+        userImages: request.userImages,
+        sceneCount: request.sceneCount,
+        characterCount: request.characterCount,
+      );
       return _currentScreenplay!;
     } catch (e) {
       _error = e.toString();

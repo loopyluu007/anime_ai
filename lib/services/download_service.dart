@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform;
+import 'package:flutter/foundation.dart' show TargetPlatform;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import '../web/adapters/file_adapter.dart';
@@ -67,21 +68,20 @@ class DownloadService {
       throw UnsupportedError('Web端不支持本地文件系统');
     }
     
-    if (io.Platform.isAndroid) {
-      // Android: 使用外部存储的Download目录
-      final directory = io.Directory('/storage/emulated/0/Download');
-      if (await directory.exists()) {
-        return directory;
+    // 在非Web平台，根据平台类型选择下载目录
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      // Android: 尝试使用外部存储的Download目录
+      try {
+        final directory = io.Directory('/storage/emulated/0/Download');
+        if (await directory.exists()) {
+          return directory;
+        }
+      } catch (_) {
+        // 如果无法访问，使用应用文档目录
       }
-      // 如果不存在，使用应用文档目录
-      return await getApplicationDocumentsDirectory();
-    } else if (io.Platform.isIOS) {
-      // iOS: 使用应用文档目录
-      return await getApplicationDocumentsDirectory();
-    } else {
-      // 其他平台
-      return await getApplicationDocumentsDirectory();
     }
+    // iOS 和其他平台使用应用文档目录
+    return await getApplicationDocumentsDirectory();
   }
 
   /// 从URL提取文件名

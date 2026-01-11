@@ -2,6 +2,38 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+/// 视频适配器（跨平台）
+/// 根据平台自动选择相应的实现
+class VideoAdapter {
+  /// 检查视频格式是否支持
+  static bool isSupportedFormat(String url) {
+    if (kIsWeb) {
+      return WebVideoAdapter.isValidDataSource(url);
+    } else {
+      // 移动端支持更多格式
+      return url.isNotEmpty;
+    }
+  }
+
+  /// 创建视频控制器
+  static Future<VideoPlayerController> createController(String url) async {
+    if (kIsWeb) {
+      return await WebVideoAdapter.createController(dataSource: url);
+    } else {
+      // 移动端：根据 URL 类型创建控制器
+      VideoPlayerController controller;
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        controller = VideoPlayerController.networkUrl(Uri.parse(url));
+      } else {
+        // 本地文件
+        controller = VideoPlayerController.asset(url);
+      }
+      await controller.initialize();
+      return controller;
+    }
+  }
+}
+
 /// Web 视频播放器适配器
 /// 提供Web平台特定的视频播放实现
 class WebVideoAdapter {
@@ -25,7 +57,7 @@ class WebVideoAdapter {
 
     final controller = VideoPlayerController.networkUrl(
       Uri.parse(dataSource),
-      videoPlayerOptions: options ?? const VideoPlayerOptions(),
+      videoPlayerOptions: options ?? VideoPlayerOptions(),
     );
 
     await controller.initialize();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/settings_provider.dart';
+import '../providers/settings_provider.dart' show SettingsProvider, AppThemeMode, AppLanguage;
 import '../widgets/settings_tile.dart';
 import '../widgets/settings_switch_tile.dart';
 
@@ -124,13 +124,13 @@ class AppSettingsScreen extends StatelessWidget {
     );
   }
 
-  String _getThemeModeText(ThemeMode mode) {
+  String _getThemeModeText(AppThemeMode mode) {
     switch (mode) {
-      case ThemeMode.light:
+      case AppThemeMode.light:
         return '浅色';
-      case ThemeMode.dark:
+      case AppThemeMode.dark:
         return '深色';
-      case ThemeMode.system:
+      case AppThemeMode.system:
         return '跟随系统';
     }
   }
@@ -157,9 +157,9 @@ class AppSettingsScreen extends StatelessWidget {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            RadioListTile<ThemeMode>(
+            RadioListTile<AppThemeMode>(
               title: const Text('浅色'),
-              value: ThemeMode.light,
+              value: AppThemeMode.light,
               groupValue: settingsProvider.themeMode,
               onChanged: (value) {
                 if (value != null) {
@@ -168,9 +168,9 @@ class AppSettingsScreen extends StatelessWidget {
                 }
               },
             ),
-            RadioListTile<ThemeMode>(
+            RadioListTile<AppThemeMode>(
               title: const Text('深色'),
-              value: ThemeMode.dark,
+              value: AppThemeMode.dark,
               groupValue: settingsProvider.themeMode,
               onChanged: (value) {
                 if (value != null) {
@@ -179,9 +179,9 @@ class AppSettingsScreen extends StatelessWidget {
                 }
               },
             ),
-            RadioListTile<ThemeMode>(
+            RadioListTile<AppThemeMode>(
               title: const Text('跟随系统'),
-              value: ThemeMode.system,
+              value: AppThemeMode.system,
               groupValue: settingsProvider.themeMode,
               onChanged: (value) {
                 if (value != null) {

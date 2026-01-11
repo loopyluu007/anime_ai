@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../../web/adapters/video_adapter.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
@@ -40,8 +41,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         return;
       }
       
-      _controller = VideoAdapter.createController(widget.videoUrl);
-      await _controller.initialize();
+      _controller = await VideoAdapter.createController(widget.videoUrl);
+      if (!_controller.value.isInitialized) {
+        await _controller.initialize();
+      }
       
       _chewieController = ChewieController(
         videoPlayerController: _controller,
