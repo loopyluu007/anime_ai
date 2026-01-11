@@ -71,13 +71,24 @@ class ImageService:
             size = params.get("size", "1024x1024")
             reference_images = params.get("reference_images", [])
             
-            # 调用 Gemini 客户端生成图片
-            response = await self.gemini_client.generate_image(
-                prompt=prompt,
-                model=model,
-                size=size,
-                reference_images=reference_images
-            )
+            # 获取用户的Gemini API密钥
+            gemini_api_key = self.user_service.get_user_api_key(task.user_id, "gemini")
+            if not gemini_api_key:
+                raise ValueError("用户未配置Gemini API密钥，请先在设置中配置")
+            
+            # 使用用户密钥创建客户端
+            gemini_client = GeminiClient(api_key=gemini_api_key)
+            
+            try:
+                # 调用 Gemini 客户端生成图片
+                response = await gemini_client.generate_image(
+                    prompt=prompt,
+                    model=model,
+                    size=size,
+                    reference_images=reference_images
+                )
+            finally:
+                await gemini_client.close()
             
             # 解析响应
             image_data = response.get("data", [])
@@ -135,6 +146,3 @@ class ImageService:
             MediaFile.user_id == user_id
         ).first()
     
-    async def close(self):
-        """关闭客户端"""
-        await self.gemini_client.close()

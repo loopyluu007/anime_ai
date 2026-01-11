@@ -1,7 +1,7 @@
 # AI漫导 Agent - 待办事项列表
 
-> 更新时间: 2026-01-15（上午）
-> 当前状态: 核心功能已完成，测试覆盖率快速提升（~82%）
+> 更新时间: 2026-01-15（下午）
+> 当前状态: 核心功能已完成，测试覆盖率快速提升（~82%），大模型配置用户化改造完成
 
 > ⏸️ **移动端开发状态**: 移动端开发已标记为搁置，暂时不需要开发，未来很长一段时间内不会需要。但已编写的代码将保留在代码库中。
 
@@ -9,6 +9,14 @@
 
 ## 当前开发任务 (Next Tasks)
 - [⏳] Web端编译测试验证（需要在实际环境中验证）
+- [✅] 大模型配置用户化改造 ✅ 已完成（2026-01-15）
+  - ✅ 数据库模型更新（User表添加API密钥字段）
+  - ✅ Pydantic模型更新（添加UserAPIKeysUpdate和更新UserResponse）
+  - ✅ UserService更新（添加API密钥管理方法）
+  - ✅ API接口添加（PUT /users/{user_id}/api-keys、GET /users/{user_id}/api-keys/status）
+  - ✅ GLMClient、TuziClient、GeminiClient改造（接受api_key参数，移除环境变量依赖）
+  - ✅ ScreenplayService、ImageService、VideoService改造（从用户配置读取API密钥）
+  - ✅ 删除改造指南临时文档
 - [✅] 性能优化 ✅ 已完成（2026-01-15）
   - ✅ 数据库查询优化（使用聚合查询，减少查询次数80-90%）
   - ✅ 缓存系统实现（Redis缓存工具类和装饰器）
@@ -31,6 +39,20 @@
 ---
 
 ## 已完成 ✅
+
+- [✅] 大模型配置用户化改造（2026-01-15 下午）
+  - ✅ 数据库模型更新（User表添加API密钥字段：glm_api_key、tuzi_api_key、gemini_api_key）
+  - ✅ Pydantic模型更新（添加UserAPIKeysUpdate和更新UserResponse）
+  - ✅ UserService更新（添加API密钥管理方法：update_user_api_keys、get_user_api_key）
+  - ✅ API接口添加（PUT /users/{user_id}/api-keys、GET /users/{user_id}/api-keys/status）
+  - ✅ GLMClient改造（接受api_key参数，移除环境变量依赖）
+  - ✅ TuziClient改造（接受api_key参数，移除环境变量依赖）
+  - ✅ GeminiClient改造（接受api_key参数，移除环境变量依赖）
+  - ✅ ScreenplayService改造（从用户配置读取GLM API密钥）
+  - ✅ ImageService改造（从用户配置读取Gemini API密钥）
+  - ✅ VideoService改造（从用户配置读取Tuzi API密钥）
+  - ✅ 删除改造指南临时文档
+  - **说明**: 所有大模型API密钥已从服务器环境变量配置改为用户自行配置，存储在用户数据库表中（明文存储），用户可通过前端界面配置API密钥
 
 - [✅] Web端编译测试验证准备（2026-01-15 上午）
   - 检查Web端代码完整性（所有Web适配层已实现）

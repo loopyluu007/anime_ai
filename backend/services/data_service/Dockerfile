@@ -17,14 +17,14 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # 复制依赖文件
-COPY services/data_service/requirements.txt /app/requirements.txt
+COPY backend/services/data_service/requirements.txt /app/requirements.txt
 
 # 安装Python依赖
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 复制项目代码
-COPY services/data_service/ /app/services/data_service/
-COPY shared/ /app/shared/
+COPY backend/services/data_service/ /app/services/data_service/
+COPY backend/shared/ /app/shared/
 
 # 设置Python路径
 ENV PYTHONPATH=/app

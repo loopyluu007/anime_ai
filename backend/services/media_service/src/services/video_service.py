@@ -15,6 +15,7 @@ sys.path.insert(0, str(backend_path))
 from shared.models.db_models import Task, MediaFile
 from shared.models.task import TaskStatus, TaskType
 from services.media_service.src.clients.tuzi_client import TuziClient
+from services.data_service.src.services.user_service import UserService
 
 
 class VideoService:
@@ -22,7 +23,7 @@ class VideoService:
     
     def __init__(self, db: Session):
         self.db = db
-        self.tuzi_client = TuziClient()
+        self.user_service = UserService(db)
     
     def create_video_task(
         self,
@@ -85,26 +86,37 @@ class VideoService:
                 if media_file:
                     image_url = media_file.url
             
-            # 调用 Tuzi 客户端生成视频
-            response = await self.tuzi_client.generate_video(
-                prompt=prompt,
-                image_url=image_url,
-                seconds=seconds,
-                model=model,
-                reference_images=reference_images
-            )
+            # 获取用户的Tuzi API密钥
+            tuzi_api_key = self.user_service.get_user_api_key(task.user_id, "tuzi")
+            if not tuzi_api_key:
+                raise ValueError("用户未配置Tuzi API密钥，请先在设置中配置")
             
-            # 解析响应
-            video_task_id = response.get("task_id") or response.get("id")
-            if not video_task_id:
-                raise ValueError("视频生成失败：响应中没有任务ID")
+            # 使用用户密钥创建客户端
+            tuzi_client = TuziClient(api_key=tuzi_api_key)
             
-            # 轮询视频生成状态
-            video_result = await self.tuzi_client.wait_for_video(
-                video_task_id,
-                max_wait_time=300,
-                poll_interval=5
-            )
+            try:
+                # 调用 Tuzi 客户端生成视频
+                response = await tuzi_client.generate_video(
+                    prompt=prompt,
+                    image_url=image_url,
+                    seconds=seconds,
+                    model=model,
+                    reference_images=reference_images
+                )
+                
+                # 解析响应
+                video_task_id = response.get("task_id") or response.get("id")
+                if not video_task_id:
+                    raise ValueError("视频生成失败：响应中没有任务ID")
+                
+                # 轮询视频生成状态
+                video_result = await tuzi_client.wait_for_video(
+                    video_task_id,
+                    max_wait_time=300,
+                    poll_interval=5
+                )
+            finally:
+                await tuzi_client.close()
             
             video_url = video_result.get("url") or video_result.get("video_url")
             if not video_url:
@@ -157,6 +169,3 @@ class VideoService:
             MediaFile.user_id == user_id
         ).first()
     
-    async def close(self):
-        """关闭客户端"""
-        await self.tuzi_client.close()

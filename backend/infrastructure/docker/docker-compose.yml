@@ -64,7 +64,7 @@ services:
   agent_service:
     build:
       context: ../..
-      dockerfile: services/agent_service/Dockerfile
+      dockerfile: backend/services/agent_service/Dockerfile
     container_name: directorai_agent_service
     ports:
       - "${AGENT_SERVICE_PORT:-8001}:8001"
@@ -88,7 +88,7 @@ services:
   media_service:
     build:
       context: ../..
-      dockerfile: services/media_service/Dockerfile
+      dockerfile: backend/services/media_service/Dockerfile
     container_name: directorai_media_service
     ports:
       - "${MEDIA_SERVICE_PORT:-8002}:8002"
@@ -116,7 +116,7 @@ services:
   data_service:
     build:
       context: ../..
-      dockerfile: services/data_service/Dockerfile
+      dockerfile: backend/services/data_service/Dockerfile
     container_name: directorai_data_service
     ports:
       - "${DATA_SERVICE_PORT:-8003}:8003"
@@ -136,7 +136,7 @@ services:
   api_gateway:
     build:
       context: ../..
-      dockerfile: api_gateway/Dockerfile
+      dockerfile: backend/api_gateway/Dockerfile
     container_name: directorai_api_gateway
     ports:
       - "${API_GATEWAY_PORT:-8000}:8000"

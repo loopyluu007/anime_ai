@@ -17,14 +17,14 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # 复制依赖文件
-COPY api_gateway/requirements.txt /app/requirements.txt
+COPY backend/api_gateway/requirements.txt /app/requirements.txt
 
 # 安装Python依赖
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 复制项目代码
-COPY api_gateway/ /app/api_gateway/
-COPY shared/ /app/shared/
+COPY backend/api_gateway/ /app/api_gateway/
+COPY backend/shared/ /app/shared/
 
 # 设置Python路径
 ENV PYTHONPATH=/app
