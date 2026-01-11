@@ -106,7 +106,7 @@ class TaskRepository:
         
         return [
             {
-                "date": result.date.isoformat() if result.date else None,
+                "date": result.date if isinstance(result.date, str) else (result.date.isoformat() if result.date else None),
                 "total": result.count,
                 "completed": result.completed_count or 0
             }

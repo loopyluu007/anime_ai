@@ -79,7 +79,7 @@ class ConversationRepository:
         
         return [
             {
-                "date": result.date.isoformat() if result.date else None,
+                "date": result.date if isinstance(result.date, str) else (result.date.isoformat() if result.date else None),
                 "count": result.count
             }
             for result in results
