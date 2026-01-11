@@ -14,7 +14,7 @@ sys.path.insert(0, str(backend_path))
 from shared.config.database import get_db
 from shared.models.message import MessageCreate
 from services.agent_service.src.services.message_service import MessageService
-from services.agent_service.src.api.auth import get_current_user
+from shared.utils.auth import get_current_user
 
 router = APIRouter(prefix="/conversations/{conversation_id}/messages", tags=["消息"])
 

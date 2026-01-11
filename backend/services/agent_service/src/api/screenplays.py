@@ -12,7 +12,7 @@ sys.path.insert(0, str(backend_path))
 from shared.config.database import get_db
 from shared.models.screenplay import ScreenplayDraft, ScreenplayConfirm, ScreenplayUpdate, ScreenplayResponse
 from services.agent_service.src.services.screenplay_service import ScreenplayService
-from services.agent_service.src.api.auth import get_current_user
+from shared.utils.auth import get_current_user
 
 router = APIRouter(prefix="/screenplays", tags=["剧本"])
 

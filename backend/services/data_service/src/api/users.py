@@ -13,7 +13,7 @@ sys.path.insert(0, str(backend_path))
 
 from shared.config.database import get_db
 from services.data_service.src.services.user_service import UserService
-from services.agent_service.src.api.auth import get_current_user
+from shared.utils.auth import get_current_user
 from shared.models.user import UserAPIKeysUpdate
 
 router = APIRouter(prefix="/users", tags=["用户数据"])

@@ -10,11 +10,10 @@ from pathlib import Path
 backend_path = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(backend_path))
 
-from shared.models.db_models import Screenplay, Scene, CharacterSheet, Task
+from shared.models.db_models import Screenplay, Scene, CharacterSheet, Task, User
 from shared.models.screenplay import ScreenplayStatus, SceneStatus
 from services.agent_service.src.clients.glm_client import GLMClient
 from services.agent_service.src.services.task_service import TaskService, TaskStatus
-from services.data_service.src.services.user_service import UserService
 
 class ScreenplayService:
     """剧本服务"""
@@ -22,7 +21,6 @@ class ScreenplayService:
     def __init__(self, db: Session):
         self.db = db
         self.task_service = TaskService(db)
-        self.user_service = UserService(db)
     
     async def create_draft(
         self,
@@ -43,8 +41,12 @@ class ScreenplayService:
         if not task:
             raise ValueError("任务不存在")
         
-        # 获取用户的GLM API密钥
-        glm_api_key = self.user_service.get_user_api_key(user_id, "glm")
+        # 获取用户的GLM API密钥（直接从数据库查询，避免跨服务导入）
+        user = self.db.query(User).filter(User.id == user_id).first()
+        if not user:
+            raise ValueError("用户不存在")
+        
+        glm_api_key = user.glm_api_key
         if not glm_api_key:
             raise ValueError("用户未配置GLM API密钥，请先在设置中配置")
         

@@ -1,10 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
-from jose import JWTError, jwt
-from typing import Optional
-import os
 
 import sys
 from pathlib import Path
@@ -16,45 +12,10 @@ sys.path.insert(0, str(backend_path))
 from shared.config.database import get_db
 from shared.models.user import UserCreate
 from shared.utils.exceptions import AuthenticationError
+from shared.utils.auth import create_access_token, get_current_user, ACCESS_TOKEN_EXPIRE_MINUTES
 from services.agent_service.src.services.auth_service import AuthService
 
 router = APIRouter(prefix="/auth", tags=["认证"])
-
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
-
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    """创建访问令牌"""
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.utcnow() + expires_delta
-    else:
-        expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
-
-async def get_current_user(
-    token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db)
-):
-    """获取当前用户"""
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: str = payload.get("sub")
-        if user_id is None:
-            raise AuthenticationError("Token 无效")
-    except JWTError:
-        raise AuthenticationError("Token 无效")
-    
-    auth_service = AuthService(db)
-    user = auth_service.get_user_by_id(user_id)
-    if user is None:
-        raise AuthenticationError("用户不存在")
-    return user
 
 @router.post("/register", response_model=dict)
 async def register(user_data: UserCreate, db: Session = Depends(get_db)):

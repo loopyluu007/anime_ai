@@ -12,10 +12,9 @@ from pathlib import Path
 backend_path = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(backend_path))
 
-from shared.models.db_models import Task, MediaFile
+from shared.models.db_models import Task, MediaFile, User
 from shared.models.task import TaskStatus, TaskType
 from services.media_service.src.clients.tuzi_client import TuziClient
-from services.data_service.src.services.user_service import UserService
 
 
 class VideoService:
@@ -23,7 +22,6 @@ class VideoService:
     
     def __init__(self, db: Session):
         self.db = db
-        self.user_service = UserService(db)
     
     def create_video_task(
         self,
@@ -86,8 +84,12 @@ class VideoService:
                 if media_file:
                     image_url = media_file.url
             
-            # 获取用户的Tuzi API密钥
-            tuzi_api_key = self.user_service.get_user_api_key(task.user_id, "tuzi")
+            # 获取用户的Tuzi API密钥（直接从数据库查询，避免跨服务导入）
+            user = self.db.query(User).filter(User.id == task.user_id).first()
+            if not user:
+                raise ValueError("用户不存在")
+            
+            tuzi_api_key = user.tuzi_api_key
             if not tuzi_api_key:
                 raise ValueError("用户未配置Tuzi API密钥，请先在设置中配置")
             

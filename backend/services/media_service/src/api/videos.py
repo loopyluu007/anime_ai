@@ -13,7 +13,7 @@ sys.path.insert(0, str(backend_path))
 from shared.config.database import get_db
 from shared.models.media import VideoGenerateRequest
 from services.media_service.src.services.video_service import VideoService
-from services.agent_service.src.api.auth import get_current_user
+from shared.utils.auth import get_current_user
 
 router = APIRouter(prefix="/media/videos", tags=["视频"])
 

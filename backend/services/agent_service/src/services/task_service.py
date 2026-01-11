@@ -12,7 +12,6 @@ sys.path.insert(0, str(backend_path))
 
 from shared.models.db_models import Task
 from shared.models.task import TaskCreate, TaskStatus, TaskType
-from services.agent_service.src.services.screenplay_service import ScreenplayService
 
 class TaskService:
     """任务服务"""
@@ -129,6 +128,9 @@ class TaskService:
             
             if not prompt:
                 raise ValueError("任务参数中缺少prompt")
+            
+            # 延迟导入以避免循环导入
+            from services.agent_service.src.services.screenplay_service import ScreenplayService
             
             # 创建剧本服务并生成剧本草稿
             screenplay_service = ScreenplayService(self.db)

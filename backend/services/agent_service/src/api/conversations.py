@@ -13,7 +13,7 @@ sys.path.insert(0, str(backend_path))
 from shared.config.database import get_db
 from shared.models.conversation import ConversationCreate, ConversationUpdate
 from services.agent_service.src.services.conversation_service import ConversationService
-from services.agent_service.src.api.auth import get_current_user
+from shared.utils.auth import get_current_user
 
 router = APIRouter(prefix="/conversations", tags=["对话"])
 

@@ -12,10 +12,9 @@ from pathlib import Path
 backend_path = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(backend_path))
 
-from shared.models.db_models import Task, MediaFile
+from shared.models.db_models import Task, MediaFile, User
 from shared.models.task import TaskStatus, TaskType
 from services.media_service.src.clients.gemini_client import GeminiClient
-from services.data_service.src.services.user_service import UserService
 
 
 class ImageService:
@@ -23,7 +22,6 @@ class ImageService:
     
     def __init__(self, db: Session):
         self.db = db
-        self.user_service = UserService(db)
     
     def create_image_task(
         self,
@@ -71,8 +69,12 @@ class ImageService:
             size = params.get("size", "1024x1024")
             reference_images = params.get("reference_images", [])
             
-            # 获取用户的Gemini API密钥
-            gemini_api_key = self.user_service.get_user_api_key(task.user_id, "gemini")
+            # 获取用户的Gemini API密钥（直接从数据库查询，避免跨服务导入）
+            user = self.db.query(User).filter(User.id == task.user_id).first()
+            if not user:
+                raise ValueError("用户不存在")
+            
+            gemini_api_key = user.gemini_api_key
             if not gemini_api_key:
                 raise ValueError("用户未配置Gemini API密钥，请先在设置中配置")
             
