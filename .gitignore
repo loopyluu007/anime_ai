@@ -10,7 +10,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# 注意：不忽略 lib/ 目录，因为 Flutter 项目需要 lib/ 目录
+# Python 虚拟环境中的 lib 目录会被 venv/ 规则覆盖
 lib64/
 parts/
 sdist/
@@ -62,3 +63,13 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+
+# Flutter/Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+# 注意：build/ 已经在 Python 部分被忽略
+# 注意：lib/ 目录不应该被忽略（Flutter 源代码目录）
