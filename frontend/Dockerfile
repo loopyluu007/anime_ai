@@ -19,24 +19,25 @@ COPY . .
 RUN flutter config --enable-web
 
 # 构建 Web 应用（release 模式）
-# 使用 canvaskit 渲染器以获得更好的性能
-RUN flutter build web --release --web-renderer canvaskit
+# 注意：Flutter 3.x+ 已移除 --web-renderer 参数，默认使用 canvaskit
+RUN flutter build web --release
 
 # 阶段2: 使用 Nginx 提供静态文件
 FROM nginx:alpine
+
+# 安装 wget 用于健康检查
+RUN apk add --no-cache wget
 
 # 复制构建产物到 Nginx 目录
 COPY --from=build /app/build/web /usr/share/nginx/html
 
 # 复制自定义 Nginx 配置
-# 如果 nginx.conf 存在则使用，否则使用默认配置
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 # 暴露端口
 EXPOSE 80
 
-# 健康检查（使用 wget，如果不存在则安装）
-RUN apk add --no-cache wget || true
+# 健康检查
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost/ || exit 1
 
