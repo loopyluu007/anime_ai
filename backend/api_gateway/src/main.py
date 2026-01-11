@@ -15,6 +15,7 @@ from api_gateway.src.middleware.cors import setup_cors
 from api_gateway.src.middleware.auth import auth_middleware
 from api_gateway.src.middleware.rate_limit import rate_limit_middleware
 from api_gateway.src.routes.gateway import router
+from shared.middleware.error_handler import error_handler_middleware
 
 
 app = FastAPI(
@@ -63,6 +64,11 @@ async def auth_middleware_wrapper(request: Request, call_next):
 
 # 注册路由
 app.include_router(router)
+
+# 错误处理中间件（必须在最后注册）
+@app.middleware("http")
+async def error_handler(request, call_next):
+    return await error_handler_middleware(request, call_next)
 
 
 @app.get("/")

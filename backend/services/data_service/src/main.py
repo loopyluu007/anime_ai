@@ -11,6 +11,7 @@ backend_path = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(backend_path))
 
 from services.data_service.src.api import users
+from shared.middleware.error_handler import error_handler_middleware
 
 app = FastAPI(
     title="AI漫导 Data Service",
@@ -26,6 +27,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 错误处理中间件（必须在最后注册）
+@app.middleware("http")
+async def error_handler(request, call_next):
+    return await error_handler_middleware(request, call_next)
 
 # 注册路由
 app.include_router(users.router, prefix="/api/v1")

@@ -12,6 +12,7 @@ sys.path.insert(0, str(backend_path))
 
 from services.agent_service.src.api import auth, conversations, tasks, screenplays, messages
 from services.agent_service.src.api.websocket import websocket_endpoint
+from shared.middleware.error_handler import error_handler_middleware
 
 app = FastAPI(
     title="AI漫导 Agent Service",
@@ -27,6 +28,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 错误处理中间件（必须在最后注册）
+@app.middleware("http")
+async def error_handler(request, call_next):
+    return await error_handler_middleware(request, call_next)
 
 # 注册路由
 app.include_router(auth.router, prefix="/api/v1")

@@ -32,7 +32,9 @@ class UserRepository:
         return user
     
     def get_user_stats(self, user_id: UUID) -> Dict[str, Any]:
-        """获取用户统计数据"""
+        """获取用户统计数据（优化：使用聚合查询减少查询次数）"""
+        from sqlalchemy import case
+        
         user = self.get_user_by_id(user_id)
         if not user:
             return {}
@@ -42,19 +44,19 @@ class UserRepository:
             Conversation.user_id == user_id
         ).scalar() or 0
         
-        # 消息统计
+        # 消息统计（通过JOIN优化）
         message_count = self.db.query(func.count(Message.id)).join(
-            Conversation
+            Conversation, Message.conversation_id == Conversation.id
         ).filter(Conversation.user_id == user_id).scalar() or 0
         
-        # 任务统计
-        task_count = self.db.query(func.count(Task.id)).filter(
-            Task.user_id == user_id
-        ).scalar() or 0
+        # 任务统计（使用聚合查询一次性获取）
+        task_stats = self.db.query(
+            func.count(Task.id).label("task_count"),
+            func.sum(case((Task.status == "completed", 1), else_=0)).label("completed_task_count"),
+        ).filter(Task.user_id == user_id).first()
         
-        completed_task_count = self.db.query(func.count(Task.id)).filter(
-            and_(Task.user_id == user_id, Task.status == "completed")
-        ).scalar() or 0
+        task_count = task_stats.task_count or 0
+        completed_task_count = task_stats.completed_task_count or 0
         
         # 最近7天活跃度
         seven_days_ago = datetime.utcnow() - timedelta(days=7)
