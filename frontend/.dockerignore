@@ -1,0 +1,57 @@
+# Flutter 相关
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+flutter_*.png
+linked_*.ds
+unlinked.ds
+unlinked_spec.ds
+
+# IDE 相关
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.DS_Store
+
+# 测试相关
+coverage/
+test/.test_coverage.dart
+
+# 环境文件
+.env
+.env.local
+.env.*.local
+
+# 日志文件
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Git 相关
+.git/
+.gitignore
+.gitattributes
+
+# 文档
+docs/
+*.md
+!README.md
+
+# 其他
+android/
+ios/
+macos/
+windows/
+linux/
+web/icons/

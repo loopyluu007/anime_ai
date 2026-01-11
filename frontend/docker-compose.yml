@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+    container_name: director_ai_frontend
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    environment:
+      - API_BASE_URL=${API_BASE_URL:-http://localhost:8001/api/v1}
+      - WS_URL=${WS_URL:-ws://localhost:8001/ws}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - director_ai_network
+
+networks:
+  director_ai_network:
+    external: false
