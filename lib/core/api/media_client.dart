@@ -22,6 +22,7 @@ class MediaFile {
   final int? height;
   final String? mimeType;
   final String status;
+  final Duration? duration;
   final DateTime createdAt;
 
   MediaFile({
@@ -32,10 +33,23 @@ class MediaFile {
     this.height,
     this.mimeType,
     required this.status,
+    this.duration,
     required this.createdAt,
   });
 
   factory MediaFile.fromJson(Map<String, dynamic> json) {
+    Duration? duration;
+    if (json['duration'] != null) {
+      if (json['duration'] is int) {
+        duration = Duration(seconds: json['duration']);
+      } else if (json['duration'] is String) {
+        final seconds = int.tryParse(json['duration']);
+        if (seconds != null) {
+          duration = Duration(seconds: seconds);
+        }
+      }
+    }
+    
     return MediaFile(
       id: json['id']?.toString() ?? '',
       url: json['url'] ?? '',
@@ -44,6 +58,7 @@ class MediaFile {
       height: json['height'],
       mimeType: json['mimeType'] ?? json['mime_type'],
       status: json['status'] ?? 'pending',
+      duration: duration,
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : (json['created_at'] != null
@@ -61,6 +76,7 @@ class MediaFile {
       'height': height,
       'mimeType': mimeType,
       'status': status,
+      'duration': duration?.inSeconds,
       'createdAt': createdAt.toIso8601String(),
     };
   }

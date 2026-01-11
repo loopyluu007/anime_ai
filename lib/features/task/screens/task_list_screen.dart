@@ -154,8 +154,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
           if (provider.tasks.isEmpty) {
             return EmptyState(
               icon: Icons.task_alt,
-              title: '暂无任务',
-              message: '还没有创建任何任务',
+              message: '暂无任务\n还没有创建任何任务',
             );
           }
 

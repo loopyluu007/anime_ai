@@ -72,12 +72,17 @@ class DownloadService {
     if (defaultTargetPlatform == TargetPlatform.android) {
       // Android: 尝试使用外部存储的Download目录
       try {
-        final directory = io.Directory('/storage/emulated/0/Download');
-        if (await directory.exists()) {
-          return directory;
+        // 使用 path_provider 的 getApplicationDocumentsDirectory 返回的 Directory
+        final appDir = await getApplicationDocumentsDirectory();
+        // 创建下载子目录
+        final downloadDir = io.Directory('${appDir.path}/Download');
+        if (!await downloadDir.exists()) {
+          await downloadDir.create(recursive: true);
         }
+        return downloadDir;
       } catch (_) {
         // 如果无法访问，使用应用文档目录
+        return await getApplicationDocumentsDirectory();
       }
     }
     // iOS 和其他平台使用应用文档目录

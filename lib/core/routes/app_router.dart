@@ -4,6 +4,7 @@ import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/chat/screens/conversation_list_screen.dart';
 import '../../features/chat/screens/chat_screen.dart';
+import '../../features/chat/models/conversation.dart';
 import '../../features/screenplay/screens/screenplay_detail_screen.dart';
 import '../../features/screenplay/screens/screenplay_review_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
@@ -31,9 +32,18 @@ class AppRouter {
     switch (settings.name) {
       case '/chat':
         final args = settings.arguments as Map<String, dynamic>?;
+        final conversation = args?['conversation'] as Conversation?;
+        if (conversation == null) {
+          // 如果没有传递 conversation，返回错误页面或首页
+          return MaterialPageRoute(
+            builder: (context) => const Scaffold(
+              body: Center(child: Text('对话不存在')),
+            ),
+          );
+        }
         return MaterialPageRoute(
           builder: (context) => ChatScreen(
-            conversationId: args?['conversationId'] ?? '',
+            conversation: conversation,
           ),
         );
       case '/screenplay/review':

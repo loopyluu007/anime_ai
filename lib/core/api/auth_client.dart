@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api_client.dart';
-import '../models/user.dart';
+import '../../features/auth/models/user.dart';
 
 /// 认证客户端
 class AuthClient {

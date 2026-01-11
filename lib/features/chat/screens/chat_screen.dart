@@ -9,6 +9,7 @@ import '../widgets/message_input.dart';
 import '../widgets/screenplay_card.dart';
 import '../../core/api/api_client.dart';
 import '../../core/api/conversation_client.dart';
+import '../../core/storage/local_storage.dart';
 
 /// 聊天界面
 class ChatScreen extends StatefulWidget {
@@ -45,7 +46,9 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     // 获取或创建ChatProvider
-    final apiClient = ApiClient();
+    final apiClient = ApiClient(
+      getToken: () async => await LocalStorage.getString('auth_token'),
+    );
     final conversationClient = ConversationClient(apiClient);
     
     return ChangeNotifierProvider(

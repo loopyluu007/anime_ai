@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../../../core/api/api_client.dart';
-import '../../../core/api/auth_client.dart';
 import '../../../core/api/media_client.dart';
+import '../../../core/storage/local_storage.dart';
 
 /// 图库类型
 enum GalleryType {
@@ -40,7 +40,11 @@ class GalleryProvider extends ChangeNotifier {
           : _hasMoreVideos;
   
   GalleryProvider() 
-      : _mediaClient = MediaClient(ApiClient(AuthClient()));
+      : _mediaClient = MediaClient(
+          ApiClient(
+            getToken: () async => await LocalStorage.getString('auth_token'),
+          ),
+        );
   
   /// 切换图库类型
   void setType(GalleryType type) {

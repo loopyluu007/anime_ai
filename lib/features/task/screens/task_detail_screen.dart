@@ -5,7 +5,7 @@ import '../widgets/task_progress_widget.dart';
 import '../../../core/models/task.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/error_widget.dart';
-import '../../../shared/utils/date_utils.dart';
+import '../../../shared/utils/date_utils.dart' as date_utils;
 
 /// 任务详情界面
 class TaskDetailScreen extends StatefulWidget {
@@ -153,19 +153,19 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     _buildInfoRow(
                       context,
                       '创建时间',
-                      DateUtils.formatDateTime(task.createdAt),
+                      date_utils.AppDateUtils.formatDateTime(task.createdAt),
                     ),
                     if (task.updatedAt != null)
                       _buildInfoRow(
                         context,
                         '更新时间',
-                        DateUtils.formatDateTime(task.updatedAt!),
+                        date_utils.AppDateUtils.formatDateTime(task.updatedAt!),
                       ),
                     if (task.completedAt != null)
                       _buildInfoRow(
                         context,
                         '完成时间',
-                        DateUtils.formatDateTime(task.completedAt!),
+                        date_utils.AppDateUtils.formatDateTime(task.completedAt!),
                       ),
                   ],
                 ),

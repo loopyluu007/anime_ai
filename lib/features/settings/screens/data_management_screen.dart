@@ -68,8 +68,12 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
       if (await cacheDir.exists()) {
         await for (final entity in cacheDir.list(recursive: true)) {
           if (entity is io.File) {
-            final length = await entity.length();
-            totalSize += length.toInt();
+            try {
+              final length = await entity.length();
+              totalSize += length.toInt();
+            } catch (_) {
+              // 忽略无法读取的文件
+            }
           }
         }
       }
@@ -103,8 +107,12 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
       int totalSize = 0;
       await for (final entity in hiveDir.list(recursive: true)) {
         if (entity is io.File) {
-          final length = await entity.length();
-          totalSize += length.toInt();
+          try {
+            final length = await entity.length();
+            totalSize += length.toInt();
+          } catch (_) {
+            // 忽略无法读取的文件
+          }
         }
       }
 

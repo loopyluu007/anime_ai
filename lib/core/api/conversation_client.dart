@@ -2,6 +2,39 @@ import 'api_client.dart';
 import '../../features/chat/models/conversation.dart';
 import '../../features/chat/models/message.dart';
 
+/// 分页响应
+class PaginatedResponse<T> {
+  final List<T> items;
+  final int total;
+  final int page;
+  final int pageSize;
+  final bool hasNext;
+
+  PaginatedResponse({
+    required this.items,
+    required this.total,
+    required this.page,
+    required this.pageSize,
+    required this.hasNext,
+  });
+
+  factory PaginatedResponse.fromJson(
+    Map<String, dynamic> json,
+    T Function(dynamic) fromJsonT,
+  ) {
+    return PaginatedResponse<T>(
+      items: (json['items'] as List<dynamic>?)
+              ?.map((item) => fromJsonT(item))
+              .toList() ??
+          [],
+      total: json['total'] ?? 0,
+      page: json['page'] ?? 1,
+      pageSize: json['pageSize'] ?? json['page_size'] ?? 20,
+      hasNext: json['hasNext'] ?? json['has_next'] ?? false,
+    );
+  }
+}
+
 /// 对话客户端
 class ConversationClient {
   final ApiClient _apiClient;

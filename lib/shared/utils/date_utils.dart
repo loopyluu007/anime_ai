@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import '../../core/utils/formatters.dart';
 
-class DateUtils {
+class AppDateUtils {
   // 格式化日期时间
   static String formatDateTime(DateTime dateTime, {String pattern = 'yyyy-MM-dd HH:mm:ss'}) {
     return Formatters.formatDateTime(dateTime, pattern: pattern);
