@@ -6,6 +6,19 @@
 
 ---
 
+## 🤖 AI 自动部署推荐
+
+**如果你是使用 Zeabur AI 自动部署，推荐使用**: [ZEABUR_AI_DEPLOYMENT.md](./ZEABUR_AI_DEPLOYMENT.md)
+
+该文档专为 AI 自动部署设计，包含:
+- ✅ 所有部署步骤在一个文档中
+- ✅ 清晰的步骤顺序和检查清单
+- ✅ 完整的环境变量清单
+- ✅ 包含数据库迁移 SQL（无需查找其他文件）
+- ✅ 优化后的 AI 可读性
+
+---
+
 ## 📋 目录
 
 1. [架构概览](#架构概览)
@@ -489,9 +502,8 @@ curl https://data-service-[hash].zeabur.app/health
 
 ## 🔗 相关文档
 
-- [Supabase 集成指南](./SUPABASE_SETUP.md) - Supabase 详细配置
-- [Zeabur 部署指南](./ZEABUR_DEPLOYMENT.md) - Zeabur 详细说明
-- [统一部署指南](./DEPLOYMENT.md) - 本地 Docker 部署
+- [Zeabur AI 自动部署指南](./ZEABUR_AI_DEPLOYMENT.md) - 🤖 AI 自动部署专用文档
+- [本地部署指南](./DEPLOYMENT.md) - 本地 Docker 部署
 - [快速开始指南](./QUICKSTART.md) - 开发环境搭建
 
 ---

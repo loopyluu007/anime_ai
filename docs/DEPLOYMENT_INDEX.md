@@ -38,34 +38,21 @@
 
 ---
 
-### 📖 详细配置文档
+### 🤖 AI 自动部署
 
-#### [Supabase 集成指南](../SUPABASE_SETUP.md)
+#### [Zeabur AI 自动部署指南](../ZEABUR_AI_DEPLOYMENT.md) ⭐ **AI 推荐**
 
-**内容**: Supabase 详细配置和集成说明
+**适用场景**: 使用 Zeabur AI 自动部署后端服务
 
-**包含**:
-- Supabase 项目创建
-- 数据库配置
-- Storage 配置
-- 权限设置
-- 常见问题
+**包含内容**:
+- ✅ 完整的 Supabase 配置步骤（包含数据库迁移 SQL）
+- ✅ 4 个后端服务的详细部署步骤
+- ✅ 每个服务的环境变量清单
+- ✅ Dockerfile 路径说明
+- ✅ 故障排查指南
+- ✅ AI 部署检查清单
 
-**推荐**: 需要深入了解 Supabase 配置时查看
-
----
-
-#### [Zeabur 部署指南](../ZEABUR_DEPLOYMENT.md)
-
-**内容**: Zeabur 平台详细部署说明
-
-**包含**:
-- Zeabur 服务配置
-- Dockerfile 说明
-- 环境变量配置
-- 服务间通信
-
-**推荐**: 需要深入了解 Zeabur 部署时查看
+**推荐**: 使用 Zeabur AI 自动部署时使用
 
 ---
 
@@ -73,10 +60,9 @@
 
 ```
 项目根目录/
-├── DEPLOYMENT_GUIDE.md          # ⭐ 完整部署指南（推荐）
+├── DEPLOYMENT_GUIDE.md          # ⭐ 完整部署指南（推荐，人类阅读）
+├── ZEABUR_AI_DEPLOYMENT.md      # 🤖 AI 自动部署指南（AI 推荐）
 ├── DEPLOYMENT.md                # 本地部署指南
-├── SUPABASE_SETUP.md            # Supabase 详细配置
-├── ZEABUR_DEPLOYMENT.md         # Zeabur 详细配置
 └── docs/
     └── DEPLOYMENT_INDEX.md      # 本文档（部署文档索引）
 ```
@@ -93,13 +79,13 @@
 
 👉 **查看**: [本地部署指南](../DEPLOYMENT.md)
 
-### 场景 3: 只配置 Supabase
+### 场景 3: 使用 Zeabur AI 自动部署
 
-👉 **查看**: [Supabase 集成指南](../SUPABASE_SETUP.md)
+👉 **查看**: [Zeabur AI 自动部署指南](../ZEABUR_AI_DEPLOYMENT.md)
 
-### 场景 4: 只部署到 Zeabur
+### 场景 4: 本地开发测试
 
-👉 **查看**: [Zeabur 部署指南](../ZEABUR_DEPLOYMENT.md)
+👉 **查看**: [本地部署指南](../DEPLOYMENT.md)
 
 ---
 
@@ -107,6 +93,7 @@
 
 | 日期 | 版本 | 更新内容 |
 |------|------|----------|
+| 2026-01-16 | v2.1 | 创建 AI 自动部署指南，删除冗余文档 |
 | 2026-01-16 | v2.0 | 创建完整部署指南，整合 Supabase + Zeabur + Vercel |
 | 2026-01-16 | v1.0 | 初始文档创建 |
 
