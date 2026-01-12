@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ImageInfo;
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/api/media_client.dart';
 import '../../../shared/widgets/loading_indicator.dart';
@@ -264,7 +264,7 @@ class _VideoGridItem extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        _formatDuration(video.duration!),
+                        _formatDuration(video.duration!.inSeconds),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 10,

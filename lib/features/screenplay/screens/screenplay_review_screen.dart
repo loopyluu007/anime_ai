@@ -4,7 +4,7 @@ import '../providers/screenplay_provider.dart';
 import '../widgets/scene_card.dart';
 import '../widgets/character_sheet_card.dart';
 import '../../../shared/widgets/loading_indicator.dart';
-import '../../../shared/widgets/error_widget.dart';
+import '../../../shared/widgets/error_widget.dart' as error_widget;
 import 'screenplay_detail_screen.dart';
 
 class ScreenplayReviewScreen extends StatefulWidget {
@@ -103,7 +103,7 @@ class _ScreenplayReviewScreenState extends State<ScreenplayReviewScreen> {
           }
 
           if (provider.error != null && provider.currentScreenplay == null) {
-            return ErrorWidget(
+            return error_widget.AppErrorWidget(
               message: provider.error!,
               onRetry: _loadScreenplay,
             );

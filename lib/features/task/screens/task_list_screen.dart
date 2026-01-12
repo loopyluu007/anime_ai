@@ -5,7 +5,7 @@ import '../widgets/task_card.dart';
 import '../../../core/models/task.dart';
 import '../../../shared/widgets/loading_indicator.dart';
 import '../../../shared/widgets/empty_state.dart';
-import '../../../shared/widgets/error_widget.dart';
+import '../../../shared/widgets/error_widget.dart' as error_widget;
 import 'task_detail_screen.dart';
 
 /// 任务列表界面
@@ -141,7 +141,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
           // 错误状态
           if (provider.error != null && provider.tasks.isEmpty) {
-            return ErrorWidget(
+            return error_widget.AppErrorWidget(
               message: provider.error!,
               onRetry: () {
                 provider.clearError();

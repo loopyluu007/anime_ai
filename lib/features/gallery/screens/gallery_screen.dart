@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ImageInfo;
 import 'package:provider/provider.dart';
 import '../providers/gallery_provider.dart';
 import '../widgets/media_grid.dart';
@@ -93,7 +93,7 @@ class _GalleryScreenState extends State<GalleryScreen>
         builder: (context, provider, child) {
           // 错误状态
           if (provider.error != null && provider.images.isEmpty && provider.videos.isEmpty) {
-            return error_widget.ErrorWidget(
+            return error_widget.AppErrorWidget(
               message: provider.error!,
               onRetry: () => provider.refresh(),
             );
@@ -583,7 +583,7 @@ class _VideoDetailScreen extends StatelessWidget {
                   if (video.duration != null) ...[
                     const SizedBox(height: 8),
                     Text(
-                      '时长: ${_formatDuration(video.duration!)}',
+                      '时长: ${_formatDuration(video.duration!.inSeconds)}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],

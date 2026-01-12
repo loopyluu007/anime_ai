@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../../core/api/conversation_client.dart';
+import '../../../core/api/conversation_client.dart';
 import '../models/conversation.dart';
 import 'websocket_provider.dart';
 

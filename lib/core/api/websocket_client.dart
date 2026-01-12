@@ -85,7 +85,7 @@ class WebSocketClient {
       // 获取 Token
       String? token;
       if (_getToken != null) {
-        token = await _getToken();
+        token = await _getToken?.call();
       } else {
         token = await LocalStorage.getString(_tokenKey);
       }
