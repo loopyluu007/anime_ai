@@ -13,10 +13,10 @@ class Navigator {
   Future<void> Function(Map<String, String>)? share;
 }
 
-/// Stub for html library
+/// Stub for html library - provides window property
 class _HtmlStub {
-  static final Window window = Window();
+  final Window window = Window();
 }
 
 /// Stub html object - actual implementations will never be called on non-web platforms
-dynamic html = _HtmlStub();
+final _HtmlStub html = _HtmlStub();

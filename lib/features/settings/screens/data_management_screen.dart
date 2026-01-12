@@ -69,8 +69,8 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
 
         if (await cacheDir.exists()) {
           await for (final entity in cacheDir.list(recursive: true)) {
-            // 在非Web平台，io.File 是 dart:io 的 File
-            if (entity is io.File) {
+            // 在非Web平台，entity 是 dart:io 的 FileSystemEntity
+            if (entity is File) {
               try {
                 final length = await entity.length();
                 totalSize += length;
@@ -107,7 +107,7 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
       if (!kIsWeb) {
         final appDir = await getApplicationDocumentsDirectory();
         final hiveDirPath = path.join(appDir.path, 'hive_db');
-        final hiveDir = io.Directory(hiveDirPath);
+        final hiveDir = Directory(hiveDirPath);
         
         if (!await hiveDir.exists()) {
           return 0;
@@ -115,8 +115,8 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
 
         int totalSize = 0;
         await for (final entity in hiveDir.list(recursive: true)) {
-          // 在非Web平台，io.File 是 dart:io 的 File
-          if (entity is io.File) {
+          // 在非Web平台，entity 是 dart:io 的 FileSystemEntity
+          if (entity is File) {
             try {
               final length = await entity.length();
               totalSize += length;

@@ -4,8 +4,7 @@ import 'package:flutter/foundation.dart' show TargetPlatform;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import '../web/adapters/file_adapter.dart';
-
-// 条件导入：移动端使用 dart:io
+// 条件导入：Web端使用dart:html，移动端使用dart:io
 import 'dart:io' if (dart.library.html) 'dart:html' as io;
 
 /// 下载服务
@@ -63,7 +62,7 @@ class DownloadService {
   }
 
   /// 获取下载目录
-  Future<io.Directory> _getDownloadDirectory() async {
+  Future<Directory> _getDownloadDirectory() async {
     if (kIsWeb) {
       throw UnsupportedError('Web端不支持本地文件系统');
     }
@@ -75,7 +74,7 @@ class DownloadService {
         // 使用 path_provider 的 getApplicationDocumentsDirectory 返回的 Directory
         final appDir = await getApplicationDocumentsDirectory();
         // 创建下载子目录
-        final downloadDir = io.Directory('${appDir.path}/Download');
+        final downloadDir = Directory('${appDir.path}/Download');
         if (!await downloadDir.exists()) {
           await downloadDir.create(recursive: true);
         }
