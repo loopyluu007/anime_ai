@@ -1,6 +1,9 @@
-# AI漫导统一部署指南
+# AI漫导本地部署指南
 
-本文档说明如何使用项目根目录的统一部署脚本进行前后端一体化部署。
+> **注意**: 此文档用于本地 Docker Compose 部署  
+> **云部署**: 请查看 [完整部署指南](./DEPLOYMENT_GUIDE.md)（Supabase + Zeabur + Vercel）
+
+本文档说明如何使用项目根目录的统一部署脚本进行本地前后端一体化部署。
 
 ## 📋 目录结构
 
@@ -15,6 +18,35 @@
 
 ## 🚀 快速开始
 
+### 部署方式选择
+
+#### 方式 1：使用 Supabase（推荐用于云部署）⭐
+
+**优势**：
+- ✅ 无需自建数据库和存储
+- ✅ 自动备份和高可用
+- ✅ 免费额度适合开发和小型项目
+- ✅ CDN 加速存储文件
+
+**适用场景**：
+- 云平台部署（Zeabur、Vercel、Railway 等）
+- 快速上线
+- 降低运维成本
+
+详细说明请查看 [Zeabur 部署指南](./ZEABUR_DEPLOYMENT.md) 中的 Supabase 配置部分。
+
+#### 方式 2：使用 Docker Compose（本地/自建服务器）
+
+**优势**：
+- ✅ 完全控制所有服务
+- ✅ 适合本地开发
+- ✅ 适合私有部署
+
+**适用场景**：
+- 本地开发环境
+- 私有服务器部署
+- 需要完全控制基础设施
+
 ### 1. 环境准备
 
 确保已安装：
@@ -22,6 +54,26 @@
 - Docker Compose >= 2.0（或 docker-compose >= 1.29）
 
 ### 2. 配置环境变量
+
+#### 使用 Supabase（推荐）
+
+```bash
+# 复制环境变量示例文件
+cp .env.example .env
+
+# 编辑 .env 文件，配置必要的环境变量
+# 至少需要配置：
+# - DATABASE_URL (Supabase PostgreSQL)
+# - SUPABASE_URL
+# - SUPABASE_KEY
+# - SUPABASE_BUCKET
+# - GLM_API_KEY
+# - TUZI_API_KEY
+# - GEMINI_API_KEY
+# - SECRET_KEY
+```
+
+#### 使用 Docker Compose（本地部署）
 
 ```bash
 # 复制环境变量示例文件
@@ -33,6 +85,7 @@ cp .env.example .env
 # - TUZI_API_KEY
 # - GEMINI_API_KEY
 # - SECRET_KEY
+# 数据库和 Redis 会自动启动（Docker Compose）
 ```
 
 ### 3. 启动服务
@@ -226,15 +279,49 @@ curl http://localhost:8080/       # Frontend
 
 ## 📝 环境变量说明
 
-### 必需配置
+### 使用 Supabase 的配置
+
+#### 必需配置
+
+- `DATABASE_URL` - Supabase PostgreSQL 连接字符串
+  - 格式：`postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres`
+  - 获取方式：Supabase Dashboard → Settings → Database → Connection string
+- `SUPABASE_URL` - Supabase 项目 URL
+  - 格式：`https://[PROJECT-REF].supabase.co`
+- `SUPABASE_KEY` - Supabase service_role key（用于服务端访问）
+  - 获取方式：Supabase Dashboard → Settings → API → service_role key
+- `SUPABASE_BUCKET` - Storage Bucket 名称（默认：`directorai-media`）
+- `GLM_API_KEY` - 智谱 AI API 密钥（用于对话和剧本生成）
+- `TUZI_API_KEY` - 图子 API 密钥（用于视频生成）
+- `GEMINI_API_KEY` - Google Gemini API 密钥（用于图片生成）
+- `SECRET_KEY` - JWT 密钥（生产环境请使用强密钥）
+
+#### 可选配置
+
+- `REDIS_URL` - Redis 连接（如果使用 Redis，默认：`redis://localhost:6379/0`）
+- `API_BASE_URL` - 前端 API 基础 URL（默认：http://localhost:8000/api/v1）
+- `WS_URL` - 前端 WebSocket URL（默认：ws://localhost:8000/ws）
+- `FRONTEND_PORT` - 前端端口（默认：8080）
+- `API_GATEWAY_PORT` - API 网关端口（默认：8000）
+- `CORS_ORIGINS` - CORS 允许的来源（默认：*）
+
+### 使用 Docker Compose 的配置
+
+#### 必需配置
 
 - `GLM_API_KEY` - 智谱 AI API 密钥（用于对话和剧本生成）
 - `TUZI_API_KEY` - 图子 API 密钥（用于视频生成）
 - `GEMINI_API_KEY` - Google Gemini API 密钥（用于图片生成）
 - `SECRET_KEY` - JWT 密钥（生产环境请使用强密钥）
 
-### 可选配置
+#### 可选配置
 
+- `POSTGRES_USER` - PostgreSQL 用户名（默认：directorai）
+- `POSTGRES_PASSWORD` - PostgreSQL 密码（默认：directorai）
+- `POSTGRES_DB` - PostgreSQL 数据库名（默认：directorai）
+- `REDIS_PORT` - Redis 端口（默认：6379）
+- `MINIO_ROOT_USER` - MinIO 用户名（默认：minioadmin）
+- `MINIO_ROOT_PASSWORD` - MinIO 密码（默认：minioadmin）
 - `API_BASE_URL` - 前端 API 基础 URL（默认：http://localhost:8000/api/v1）
 - `WS_URL` - 前端 WebSocket URL（默认：ws://localhost:8000/ws）
 - `FRONTEND_PORT` - 前端端口（默认：8080）
@@ -583,7 +670,44 @@ location ~* \.(jpg|jpeg|png|gif|ico|css|js|svg|woff|woff2|ttf|eot)$ {
 ## 🔗 相关文档
 
 - [快速开始指南](./QUICKSTART.md) - 快速入门和开发环境搭建
+- [Zeabur 部署指南](./ZEABUR_DEPLOYMENT.md) - Zeabur 平台部署说明（包含 Supabase 配置）
+- [Supabase 集成指南](./SUPABASE_SETUP.md) - Supabase 详细配置和集成说明
 - [后端开发文档](./backend/DEVELOPMENT.md)
 - [前端开发文档](./frontend/DEVELOPMENT.md)
 - [API接口设计文档](./docs/03-api-database/API接口设计文档.md)
 - [数据库设计文档](./docs/03-api-database/数据库设计文档.md)
+
+---
+
+## 🌐 Supabase 集成说明
+
+### 为什么使用 Supabase？
+
+1. **简化部署**：无需自建 PostgreSQL 和对象存储
+2. **降低成本**：免费额度适合开发和小型项目
+3. **高可用性**：自动备份、99.9% 可用性
+4. **易于管理**：Web 界面管理数据库和存储
+5. **CDN 加速**：Storage 文件自动 CDN 加速
+
+### Supabase 配置步骤
+
+1. **创建项目**
+   - 访问 [Supabase](https://supabase.com)
+   - 创建新项目（免费计划即可）
+
+2. **获取数据库连接**
+   - Dashboard → Settings → Database
+   - 复制 Connection string (URI)
+
+3. **创建 Storage Bucket**
+   - Dashboard → Storage → Buckets
+   - 创建 `directorai-media` bucket
+   - 设置为 Public 或 Private（根据需求）
+
+4. **配置环境变量**
+   - 在部署平台配置 `DATABASE_URL`、`SUPABASE_URL`、`SUPABASE_KEY`
+
+5. **运行数据库迁移**
+   - 使用 Supabase SQL Editor 或 psql 执行迁移脚本
+
+详细步骤请查看 [Zeabur 部署指南](./ZEABUR_DEPLOYMENT.md)。

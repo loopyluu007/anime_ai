@@ -145,7 +145,10 @@ lib/
    - 前端：http://localhost:8080
    - API 文档：http://localhost:8000/docs
 
-详细部署说明请查看 [快速开始指南](./QUICKSTART.md) 和 [部署文档](./DEPLOYMENT.md)
+详细部署说明请查看：
+- 🚀 [完整部署指南](./DEPLOYMENT_GUIDE.md) - **推荐**：Supabase + Zeabur + Vercel 云平台部署
+- 🐳 [本地部署指南](./DEPLOYMENT.md) - Docker Compose 本地部署
+- 📖 [快速开始指南](./QUICKSTART.md) - 开发环境搭建
 
 ### 方式二：手动启动（开发环境）
 

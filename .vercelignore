@@ -1,0 +1,42 @@
+# Vercel 忽略文件
+# 排除不需要部署的文件和目录
+
+# 后端代码
+backend/
+# 测试文件
+tests/
+# 文档
+docs/
+# 脚本
+scripts/
+# Android/iOS 配置
+android/
+ios/
+# 构建产物（Vercel 会自动构建）
+build/
+# 依赖
+.dart_tool/
+.packages
+# 环境变量文件
+.env
+.env.local
+.env.*.local
+# IDE 配置
+.vscode/
+.idea/
+# Git
+.git/
+.gitignore
+# 其他
+*.md
+!README.md
+images/
+*.bat
+*.sh
+docker-compose.yml
+Dockerfile*
+*.pyc
+__pycache__/
+.pytest_cache/
+.coverage
+*.log
