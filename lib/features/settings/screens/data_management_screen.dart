@@ -62,28 +62,34 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
         return 0; // Web端暂不支持计算缓存大小
       }
       
-      final cacheDir = await getTemporaryDirectory();
-      int totalSize = 0;
+      // 非Web平台：使用 dart:io
+      if (!kIsWeb) {
+        final cacheDir = await getTemporaryDirectory();
+        int totalSize = 0;
 
-      if (await cacheDir.exists()) {
-        await for (final entity in cacheDir.list(recursive: true)) {
-          if (entity is io.File) {
-            try {
-              final length = await entity.length();
-              totalSize += length is int ? length : length.toInt();
-            } catch (_) {
-              // 忽略无法读取的文件
+        if (await cacheDir.exists()) {
+          await for (final entity in cacheDir.list(recursive: true)) {
+            // 在非Web平台，io.File 是 dart:io 的 File
+            if (entity is io.File) {
+              try {
+                final length = await entity.length();
+                totalSize += length;
+              } catch (_) {
+                // 忽略无法读取的文件
+              }
             }
           }
         }
+
+        // 计算 flutter_cache_manager 的缓存
+        final defaultCacheManager = DefaultCacheManager();
+        // 注意：flutter_cache_manager 没有直接获取缓存大小的方法
+        // 这里只计算临时目录的大小
+
+        return totalSize;
       }
-
-      // 计算 flutter_cache_manager 的缓存
-      final defaultCacheManager = DefaultCacheManager();
-      // 注意：flutter_cache_manager 没有直接获取缓存大小的方法
-      // 这里只计算临时目录的大小
-
-      return totalSize;
+      
+      return 0;
     } catch (e) {
       return 0;
     }
@@ -97,27 +103,33 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
         return 0; // Web端暂不支持计算数据库大小
       }
       
-      final appDir = await getApplicationDocumentsDirectory();
-      final hiveDirPath = path.join(appDir.path, 'hive_db');
-      final hiveDir = io.Directory(hiveDirPath);
-      
-      if (!await hiveDir.exists()) {
-        return 0;
-      }
+      // 非Web平台：使用 dart:io
+      if (!kIsWeb) {
+        final appDir = await getApplicationDocumentsDirectory();
+        final hiveDirPath = path.join(appDir.path, 'hive_db');
+        final hiveDir = io.Directory(hiveDirPath);
+        
+        if (!await hiveDir.exists()) {
+          return 0;
+        }
 
-      int totalSize = 0;
-      await for (final entity in hiveDir.list(recursive: true)) {
-        if (entity is io.File) {
-          try {
-            final length = await entity.length();
-            totalSize += length is int ? length : length.toInt();
-          } catch (_) {
-            // 忽略无法读取的文件
+        int totalSize = 0;
+        await for (final entity in hiveDir.list(recursive: true)) {
+          // 在非Web平台，io.File 是 dart:io 的 File
+          if (entity is io.File) {
+            try {
+              final length = await entity.length();
+              totalSize += length;
+            } catch (_) {
+              // 忽略无法读取的文件
+            }
           }
         }
-      }
 
-      return totalSize;
+        return totalSize;
+      }
+      
+      return 0;
     } catch (e) {
       return 0;
     }
