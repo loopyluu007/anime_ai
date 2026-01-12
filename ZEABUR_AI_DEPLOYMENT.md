@@ -9,28 +9,69 @@
 
 ## 🎯 文档职责说明
 
+> **重要**: 本文档使用以下标识区分不同部分的责任范围
+
+---
+
 ### 🤖 Zeabur AI 的工作范围
 
-**Zeabur AI 需要自动完成的任务**（标记为 `🤖 Zeabur AI 任务`）:
+**Zeabur AI 需要自动完成的任务**（文档中标记为 `🤖 Zeabur AI 任务`）:
+
 - ✅ 在 Zeabur 平台连接 GitHub 仓库
 - ✅ 部署 4 个后端服务（Agent、Media、Data、API Gateway）
 - ✅ 配置每个服务的环境变量
 - ✅ 验证服务部署状态
 
+**文档位置**: 查看 "🤖 ZEABUR AI 自动部署步骤" 章节
+
+---
+
 ### 🔵 Supabase 配置（非 AI 任务）
 
-**Supabase 配置**（标记为 `🔵 SUPABASE`）:
+**Supabase 配置**（文档中标记为 `🔵 SUPABASE`）:
+
 - ⚠️ **需要在 Supabase Dashboard 手动完成**
 - ⚠️ **Zeabur AI 无法直接操作 Supabase**
 - ⚠️ **需要用户或人类管理员完成**
 - ✅ 配置完成后，获取的信息用于 Zeabur 服务配置
 
+**文档位置**: 查看 "🔵 SUPABASE 配置" 章节
+
+**Zeabur AI 的处理方式**: 
+- ⚠️ AI 需要等待用户完成 Supabase 配置
+- ✅ AI 需要使用用户提供的 Supabase 信息（DATABASE_URL、SUPABASE_URL、SUPABASE_KEY 等）来配置 Zeabur 服务
+
+---
+
 ### ⚡ Vercel 配置（本文档不涉及）
 
 **Vercel 前端部署**:
+
 - ⚠️ **本文档专注于后端服务部署**
 - ⚠️ **前端部署请参考 `DEPLOYMENT_GUIDE.md`**
 - ✅ Zeabur AI 只需完成后端部署
+
+**文档位置**: 本文档不包含 Vercel 部署步骤
+
+---
+
+## 📋 快速参考：Zeabur AI 任务清单
+
+> **🤖 Zeabur AI 可以直接跳到这里查看任务清单**
+
+### ✅ Zeabur AI 必须完成的任务（按顺序）
+
+1. **阶段 1**: 连接 GitHub 仓库到 Zeabur 项目
+2. **阶段 2**: 部署 Agent Service（端口 8001）
+3. **阶段 3**: 部署 Media Service（端口 8002，需要 Supabase Storage 配置）
+4. **阶段 4**: 部署 Data Service（端口 8003）
+5. **阶段 5**: 部署 API Gateway（端口 8000，需要其他服务的 URL）
+
+### ⚠️ 前置条件（需要用户先完成，AI 等待）
+
+- [ ] 用户已完成 Supabase 配置（🔵 SUPABASE 章节）
+- [ ] 用户已提供数据库连接信息
+- [ ] 用户已提供 API 密钥（GLM、TUZI、GEMINI）
 
 ---
 
@@ -68,9 +109,19 @@ API Gateway (端口 8000)
 
 ---
 
-### 🔵 SUPABASE 配置（必须在 Supabase 平台手动完成）
+## 🔵 SUPABASE 配置（必须在 Supabase 平台手动完成）
 
-> **⚠️ 重要**: 以下配置需要在 Supabase Dashboard 中手动完成，这部分不是 Zeabur AI 的工作。配置完成后，获取相关信息用于后续 Zeabur 服务部署。
+> **⚠️ 重要提示**: 
+> - 以下配置需要在 Supabase Dashboard 中手动完成
+> - **这部分不是 Zeabur AI 的工作**
+> - Zeabur AI 需要等待用户完成这部分配置
+> - 配置完成后，用户需要提供以下信息给 Zeabur AI:
+>   - `DATABASE_URL` - 数据库连接字符串
+>   - `SUPABASE_URL` - Supabase 项目 URL
+>   - `SUPABASE_KEY` - service_role 密钥
+>   - `SUPABASE_BUCKET` - Storage Bucket 名称（固定为 `directorai-media`）
+
+---
 
 #### 1.1 创建 Supabase 项目
 
@@ -643,14 +694,24 @@ https://api-gateway-[hash].zeabur.app/docs
 
 ## 📊 部署顺序总结
 
+### 🔵 Supabase 配置（人类管理员完成，非 AI 任务）
+
 1. ✅ **完成 Supabase 配置**（数据库、Storage、迁移）
+   - 在 Supabase Dashboard 中手动完成
+   - 获取数据库连接字符串、API 密钥等信息
+
+### 🤖 Zeabur AI 部署任务（AI 自动完成）
+
 2. ✅ **部署 Agent Service**（端口 8001）
 3. ✅ **部署 Media Service**（端口 8002）
 4. ✅ **部署 Data Service**（端口 8003）
 5. ✅ **记录所有服务 URL**
 6. ✅ **部署 API Gateway**（端口 8000，配置其他服务 URL）
 7. ✅ **验证所有服务健康状态**
-8. ✅ **配置前端连接 API Gateway**
+
+### ⚡ Vercel 前端部署（本文档不涉及，参考 DEPLOYMENT_GUIDE.md）
+
+8. ⚠️ **配置前端连接 API Gateway**（需要人类管理员在 Vercel 完成）
 
 ---
 
@@ -668,32 +729,54 @@ https://api-gateway-[hash].zeabur.app/docs
 
 ---
 
-## 📝 AI 部署检查清单
+## 📝 Zeabur AI 部署检查清单
 
-在自动部署时，请按以下顺序执行:
+> **🤖 Zeabur AI 任务**: 按照以下清单执行自动部署
 
-### 前置条件检查
-- [ ] Supabase 项目已创建
-- [ ] 数据库迁移已执行
-- [ ] Storage Bucket 已创建
-- [ ] 已获取所有 API 密钥（GLM、TUZI、GEMINI）
-- [ ] 已准备 SECRET_KEY（JWT 密钥）
+### 🔵 前置条件检查（需要确认已由人类管理员完成）
 
-### 部署执行
-- [ ] Agent Service 已部署（端口 8001）
-- [ ] Media Service 已部署（端口 8002）
-- [ ] Data Service 已部署（端口 8003）
-- [ ] 已记录所有服务 URL
-- [ ] API Gateway 已部署（端口 8000）
-- [ ] 所有服务健康检查通过
+**⚠️ 注意**: 以下项目不是 Zeabur AI 的工作，但需要确认已完成才能开始部署。
 
-### 验证测试
-- [ ] 各服务 `/health` 端点正常
-- [ ] API Gateway `/docs` 可访问
-- [ ] 数据库连接正常
-- [ ] Storage 上传功能正常
-- [ ] 服务间通信正常
+- [ ] Supabase 项目已创建（🔵 Supabase Dashboard）
+- [ ] 数据库迁移已执行（🔵 Supabase SQL Editor）
+- [ ] Storage Bucket 已创建（🔵 Supabase Dashboard）
+- [ ] 已获取所有 API 密钥（GLM、TUZI、GEMINI）- 用户提供
+- [ ] 已准备 SECRET_KEY（JWT 密钥）- 用户提供
+
+### 🤖 Zeabur AI 部署执行（AI 自动完成）
+
+- [ ] Agent Service 已部署（端口 8001）✅ **AI 任务**
+- [ ] Media Service 已部署（端口 8002）✅ **AI 任务**
+- [ ] Data Service 已部署（端口 8003）✅ **AI 任务**
+- [ ] 已记录所有服务 URL ✅ **AI 任务**
+- [ ] API Gateway 已部署（端口 8000）✅ **AI 任务**
+- [ ] 所有服务健康检查通过 ✅ **AI 任务**
+
+### ✅ 验证测试（AI 自动验证）
+
+- [ ] 各服务 `/health` 端点正常 ✅ **AI 验证**
+- [ ] API Gateway `/docs` 可访问 ✅ **AI 验证**
+- [ ] 数据库连接正常 ✅ **AI 验证**（通过服务日志）
 
 ---
 
-**注意**: 本文档专为 Zeabur AI 自动部署设计，包含所有必要信息。AI 只需按照本文档的步骤顺序执行即可完成部署。
+## 📌 重要提醒
+
+### 🤖 Zeabur AI 的核心职责
+
+**Zeabur AI 只需关注以下部分**:
+1. ✅ 连接 GitHub 仓库到 Zeabur 项目
+2. ✅ 创建并配置 4 个服务（Agent、Media、Data、API Gateway）
+3. ✅ 为每个服务配置环境变量（使用用户提供的信息）
+4. ✅ 验证服务部署状态
+
+### ⚠️ Zeabur AI 不需要做的事情
+
+1. ❌ 创建 Supabase 项目（需要在 Supabase Dashboard 手动完成）
+2. ❌ 运行数据库迁移（需要在 Supabase SQL Editor 手动完成）
+3. ❌ 部署前端到 Vercel（本文档不涉及前端部署）
+4. ❌ 获取 API 密钥（需要用户预先准备）
+
+---
+
+**注意**: 本文档专为 Zeabur AI 自动部署设计，包含所有必要信息。AI 只需按照标记为 `🤖 Zeabur AI 任务` 的部分执行即可完成部署。
