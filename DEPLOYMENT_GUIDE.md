@@ -1,23 +1,13 @@
 # 🚀 AI漫导 完整部署指南
 
 > **架构方案**: Supabase (数据库) + Zeabur (后端微服务) + Vercel (前端)  
-> **版本**: v2.0  
-> **最后更新**: 2026-01-16
+> **版本**: v3.0  
+> **最后更新**: 2026-01-XX
+
+> 💡 **提示**: 本文档是统一的部署指南，包含所有部署信息（云平台部署、本地部署、AI自动部署等）。所有部署相关的内容都在这里。
 
 ---
 
-## 🤖 AI 自动部署推荐
-
-**如果你是使用 Zeabur AI 自动部署，推荐使用**: [ZEABUR_AI_DEPLOYMENT.md](./ZEABUR_AI_DEPLOYMENT.md)
-
-该文档专为 AI 自动部署设计，包含:
-- ✅ 所有部署步骤在一个文档中
-- ✅ 清晰的步骤顺序和检查清单
-- ✅ 完整的环境变量清单
-- ✅ 包含数据库迁移 SQL（无需查找其他文件）
-- ✅ 优化后的 AI 可读性
-
----
 
 ## 📋 目录
 
@@ -164,9 +154,161 @@
 1. 进入 Supabase Dashboard
 2. 点击左侧菜单 "SQL Editor"
 3. 点击 "New query"
-4. 打开 `backend/infrastructure/database/migrations/001_initial.sql`
-5. 复制 SQL 内容到编辑器
-6. 点击 "Run" 执行
+4. 复制以下 SQL 内容到编辑器并执行：
+
+```sql
+-- 创建用户表
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    avatar_url TEXT,
+    is_active BOOLEAN DEFAULT true,
+    glm_api_key TEXT,
+    tuzi_api_key TEXT,
+    gemini_api_key TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 创建对话表
+CREATE TABLE conversations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    preview_text TEXT,
+    message_count INTEGER DEFAULT 0,
+    is_pinned BOOLEAN DEFAULT false,
+    last_accessed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 创建消息表
+CREATE TABLE messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    role VARCHAR(20) NOT NULL CHECK (role IN ('user', 'assistant')),
+    content TEXT NOT NULL,
+    type VARCHAR(20) NOT NULL DEFAULT 'text' CHECK (type IN ('text', 'image', 'video', 'screenplay')),
+    metadata JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 创建任务表
+CREATE TABLE tasks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    conversation_id UUID REFERENCES conversations(id) ON DELETE SET NULL,
+    type VARCHAR(50) NOT NULL CHECK (type IN ('screenplay', 'image', 'video')),
+    status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'completed', 'failed', 'cancelled')),
+    progress INTEGER DEFAULT 0 CHECK (progress >= 0 AND progress <= 100),
+    params JSONB,
+    result JSONB,
+    error_message TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP WITH TIME ZONE
+);
+
+-- 创建剧本表
+CREATE TABLE screenplays (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    task_id UUID NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'confirmed', 'generating', 'completed', 'failed')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 创建场景表
+CREATE TABLE scenes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    screenplay_id UUID NOT NULL REFERENCES screenplays(id) ON DELETE CASCADE,
+    scene_id INTEGER NOT NULL,
+    narration TEXT NOT NULL,
+    image_prompt TEXT NOT NULL,
+    video_prompt TEXT NOT NULL,
+    character_description TEXT,
+    image_url TEXT,
+    video_url TEXT,
+    status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'generating', 'completed', 'failed')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(screenplay_id, scene_id)
+);
+
+-- 创建角色设定表
+CREATE TABLE character_sheets (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    screenplay_id UUID NOT NULL REFERENCES screenplays(id) ON DELETE CASCADE,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    combined_view_url TEXT,
+    front_view_url TEXT,
+    side_view_url TEXT,
+    back_view_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 创建媒体文件表
+CREATE TABLE media_files (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    type VARCHAR(20) NOT NULL CHECK (type IN ('image', 'video')),
+    original_filename VARCHAR(255),
+    storage_path TEXT NOT NULL,
+    url TEXT NOT NULL,
+    mime_type VARCHAR(100),
+    size BIGINT,
+    width INTEGER,
+    height INTEGER,
+    duration INTEGER,
+    metadata JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 创建任务日志表
+CREATE TABLE task_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    task_id UUID NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    level VARCHAR(20) NOT NULL CHECK (level IN ('info', 'warning', 'error')),
+    message TEXT NOT NULL,
+    details JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 创建索引
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_conversations_user_id ON conversations(user_id);
+CREATE INDEX idx_conversations_user_updated ON conversations(user_id, updated_at DESC);
+CREATE INDEX idx_conversations_user_pinned ON conversations(user_id, is_pinned DESC, updated_at DESC);
+CREATE INDEX idx_messages_conversation_id ON messages(conversation_id);
+CREATE INDEX idx_messages_conversation_created ON messages(conversation_id, created_at);
+CREATE INDEX idx_messages_type ON messages(type);
+CREATE INDEX idx_tasks_user_id ON tasks(user_id);
+CREATE INDEX idx_tasks_user_status ON tasks(user_id, status);
+CREATE INDEX idx_tasks_conversation_id ON tasks(conversation_id);
+CREATE INDEX idx_tasks_type ON tasks(type);
+CREATE INDEX idx_tasks_status ON tasks(status);
+CREATE INDEX idx_screenplays_task_id ON screenplays(task_id);
+CREATE INDEX idx_screenplays_user_id ON screenplays(user_id);
+CREATE INDEX idx_screenplays_status ON screenplays(status);
+CREATE INDEX idx_scenes_screenplay_id ON scenes(screenplay_id);
+CREATE INDEX idx_scenes_status ON scenes(status);
+CREATE INDEX idx_character_sheets_screenplay_id ON character_sheets(screenplay_id);
+CREATE INDEX idx_media_files_user_id ON media_files(user_id);
+CREATE INDEX idx_media_files_type ON media_files(type);
+CREATE INDEX idx_media_files_created ON media_files(created_at DESC);
+CREATE INDEX idx_task_logs_task_id ON task_logs(task_id);
+CREATE INDEX idx_task_logs_level ON task_logs(level);
+CREATE INDEX idx_task_logs_created ON task_logs(created_at DESC);
+```
+
+5. 点击 "Run" 执行
 
 #### 方式 2：使用 psql 命令行
 
@@ -220,36 +362,51 @@ FOR SELECT USING (bucket_id = 'directorai-media');
    - **Port**: `8001`
 4. 配置环境变量（见下方 [环境变量配置](#环境变量配置)）
 5. 点击 "Deploy"
+6. ⏱️ 等待构建和部署完成（约 3-5 分钟，首次部署可能需要更长时间）
+7. 记录服务 URL: `https://agent-service-[hash].zeabur.app`
 
 #### 3. 部署 Media Service
 
-1. 重复步骤 2，创建新服务
-2. 配置：
+1. 在 Zeabur 项目中点击 "New Service"
+2. 选择你的 GitHub 仓库
+3. 配置服务：
    - **Service Name**: `media-service`
    - **Dockerfile Path**: `backend/services/media_service/Dockerfile.zeabur`
    - **Port**: `8002`
-3. 配置环境变量（包含 Supabase Storage 配置）
-4. 部署
+4. 配置环境变量（包含 Supabase Storage 配置，见下方 [环境变量配置](#环境变量配置)）
+5. 点击 "Deploy"
+6. ⏱️ 等待构建和部署完成（约 3-5 分钟）
+7. 记录服务 URL: `https://media-service-[hash].zeabur.app`
 
 #### 4. 部署 Data Service
 
-1. 重复步骤 2，创建新服务
-2. 配置：
+1. 在 Zeabur 项目中点击 "New Service"
+2. 选择你的 GitHub 仓库
+3. 配置服务：
    - **Service Name**: `data-service`
    - **Dockerfile Path**: `backend/services/data_service/Dockerfile.zeabur`
    - **Port**: `8003`
-3. 配置环境变量
-4. 部署
+4. 配置环境变量（见下方 [环境变量配置](#环境变量配置)）
+5. 点击 "Deploy"
+6. ⏱️ 等待构建和部署完成（约 3-5 分钟）
+7. 记录服务 URL: `https://data-service-[hash].zeabur.app`
 
-#### 5. 部署 API Gateway
+#### 5. 部署 API Gateway（最后部署）
 
-1. 重复步骤 2，创建新服务
-2. 配置：
+⚠️ **重要**: 必须先部署 Agent、Media、Data 服务，获取它们的 URL 后才能部署 API Gateway。
+
+1. 在 Zeabur 项目中点击 "New Service"
+2. 选择你的 GitHub 仓库
+3. 配置服务：
    - **Service Name**: `api-gateway`
    - **Dockerfile Path**: `backend/api_gateway/Dockerfile.zeabur`
    - **Port**: `8000`
-3. 配置环境变量（包含其他服务的 URL）
-4. 部署
+4. 配置环境变量（包含其他服务的 URL，见下方 [环境变量配置](#环境变量配置)）
+5. 点击 "Deploy"
+6. ⏱️ 等待构建和部署完成（约 3-5 分钟）
+7. 记录服务 URL: `https://api-gateway-[hash].zeabur.app`（这是前端需要配置的 API 地址）
+
+> 💡 **提示**: 项目已优化健康检查配置（60秒启动期），服务有充足的启动时间。Zeabur 会自动处理健康检查，无需手动配置。
 
 #### 6. 获取服务 URL
 
@@ -318,58 +475,135 @@ WS_URL=wss://api-gateway-[hash].zeabur.app/ws
 
 ## 🔐 环境变量配置
 
-### Supabase 配置（所有后端服务）
+### 所有服务通用环境变量
 
+| 变量名 | 必需 | 说明 | 示例值 |
+|--------|------|------|--------|
+| `DATABASE_URL` | ✅ | Supabase PostgreSQL 连接字符串 | `postgresql://postgres:password@db.xxx.supabase.co:5432/postgres` |
+| `SECRET_KEY` | ✅ | JWT 密钥（所有服务必须相同） | `your-strong-secret-key-here` |
+| `ALGORITHM` | ✅ | JWT 算法 | `HS256` |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | ✅ | Token 过期时间（分钟） | `60` |
+
+### Agent Service 环境变量
+
+**通用变量**（见上表）+ 以下专用变量：
+
+| 变量名 | 必需 | 说明 |
+|--------|------|------|
+| `GLM_API_KEY` | ✅ | 智谱 AI API 密钥 |
+| `PORT` | ✅ | 服务端口 | `8001` |
+
+**完整配置示例**:
 ```env
-# Supabase PostgreSQL 数据库
 DATABASE_URL=postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres
-
-# Supabase Storage 配置（Media Service 需要）
-SUPABASE_URL=https://[PROJECT-REF].supabase.co
-SUPABASE_KEY=[service_role key]
-SUPABASE_BUCKET=directorai-media
-```
-
-### 通用配置（所有后端服务）
-
-```env
-# Redis（可选，如果使用）
-REDIS_URL=redis://redis-host:6379/0
-
-# JWT 配置
 SECRET_KEY=your-strong-secret-key-here-change-in-production
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=60
-
-# API 密钥
 GLM_API_KEY=your-glm-api-key
-TUZI_API_KEY=your-tuzi-api-key
-GEMINI_API_KEY=your-gemini-api-key
+PORT=8001
 ```
 
-### API Gateway 专用配置
+### Media Service 环境变量
 
+**通用变量**（见上表）+ 以下专用变量：
+
+| 变量名 | 必需 | 说明 |
+|--------|------|------|
+| `SUPABASE_URL` | ✅ | Supabase 项目 URL |
+| `SUPABASE_KEY` | ✅ | Supabase service_role 密钥 |
+| `SUPABASE_BUCKET` | ✅ | Storage Bucket 名称 | `directorai-media` |
+| `TUZI_API_KEY` | ✅ | 图子视频生成 API 密钥 |
+| `GEMINI_API_KEY` | ✅ | Google Gemini API 密钥 |
+| `PORT` | ✅ | 服务端口 | `8002` |
+
+**完整配置示例**:
 ```env
-# 服务地址（部署后获取）
+DATABASE_URL=postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres
+SECRET_KEY=your-strong-secret-key-here-change-in-production
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+SUPABASE_URL=https://[PROJECT-REF].supabase.co
+SUPABASE_KEY=[service_role key]
+SUPABASE_BUCKET=directorai-media
+TUZI_API_KEY=your-tuzi-api-key
+GEMINI_API_KEY=your-gemini-api-key
+PORT=8002
+```
+
+### Data Service 环境变量
+
+**通用变量**（见上表）+ 以下专用变量：
+
+| 变量名 | 必需 | 说明 |
+|--------|------|------|
+| `PORT` | ✅ | 服务端口 | `8003` |
+
+**完整配置示例**:
+```env
+DATABASE_URL=postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres
+SECRET_KEY=your-strong-secret-key-here-change-in-production
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+PORT=8003
+```
+
+### API Gateway 环境变量
+
+**通用变量**（见上表）+ 以下专用变量：
+
+| 变量名 | 必需 | 说明 |
+|--------|------|------|
+| `AGENT_SERVICE_URL` | ✅ | Agent Service 的完整 URL |
+| `MEDIA_SERVICE_URL` | ✅ | Media Service 的完整 URL |
+| `DATA_SERVICE_URL` | ✅ | Data Service 的完整 URL |
+| `CORS_ORIGINS` | ✅ | 允许的前端域名（逗号分隔） |
+| `RATE_LIMIT_ENABLED` | ⚠️ | 是否启用限流 | `true` |
+| `RATE_LIMIT_REQUESTS` | ⚠️ | 限流请求数 | `100` |
+| `RATE_LIMIT_WINDOW` | ⚠️ | 限流时间窗口（秒） | `60` |
+| `PORT` | ✅ | 服务端口 | `8000` |
+
+**完整配置示例**:
+```env
+DATABASE_URL=postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres
+SECRET_KEY=your-strong-secret-key-here-change-in-production
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
 AGENT_SERVICE_URL=https://agent-service-[hash].zeabur.app
 MEDIA_SERVICE_URL=https://media-service-[hash].zeabur.app
 DATA_SERVICE_URL=https://data-service-[hash].zeabur.app
-
-# CORS 配置
 CORS_ORIGINS=https://your-project.vercel.app,https://www.your-domain.com
-
-# 限流配置
 RATE_LIMIT_ENABLED=true
 RATE_LIMIT_REQUESTS=100
 RATE_LIMIT_WINDOW=60
+PORT=8000
 ```
 
-### Vercel 前端配置
+⚠️ **重要**: 
+- `SECRET_KEY` 在所有后端服务中必须完全相同
+- `AGENT_SERVICE_URL`, `MEDIA_SERVICE_URL`, `DATA_SERVICE_URL` 需要使用部署后获取的实际 URL
+- `CORS_ORIGINS` 需要配置前端域名，多个域名用逗号分隔
 
+### Vercel 前端环境变量
+
+| 变量名 | 必需 | 说明 |
+|--------|------|------|
+| `API_BASE_URL` | ✅ | API Gateway 的完整 URL + `/api/v1` |
+| `WS_URL` | ✅ | WebSocket URL（使用 `wss://`） |
+
+**完整配置示例**:
 ```env
 API_BASE_URL=https://api-gateway-[hash].zeabur.app/api/v1
 WS_URL=wss://api-gateway-[hash].zeabur.app/ws
 ```
+
+### Dockerfile 路径参考
+
+| 服务 | Dockerfile 路径 |
+|------|----------------|
+| API Gateway | `backend/api_gateway/Dockerfile.zeabur` |
+| Agent Service | `backend/services/agent_service/Dockerfile.zeabur` |
+| Media Service | `backend/services/media_service/Dockerfile.zeabur` |
+| Data Service | `backend/services/data_service/Dockerfile.zeabur` |
 
 ---
 
@@ -431,6 +665,22 @@ curl https://data-service-[hash].zeabur.app/health
 2. 查看 Zeabur 构建日志
 3. 确认环境变量配置正确
 4. 检查端口配置（Zeabur 会自动映射）
+5. 注意：项目已优化健康检查配置，服务有60秒启动期，首次部署可能需要更长时间
+
+### 服务启动时间过长
+
+**问题**: 服务部署后启动时间超过预期
+
+**说明**: 
+- 项目已优化健康检查配置（启动期60秒，重试5次）
+- 首次部署需要初始化数据库、安装依赖等，可能需要更长时间
+- Zeabur 会自动处理健康检查，无需手动配置
+
+**解决**:
+1. 查看 Zeabur 构建日志，确认构建是否成功
+2. 查看服务运行日志，检查是否有错误
+3. 确认环境变量配置正确（特别是数据库连接）
+4. 检查资源限制，确保服务有足够资源
 
 ### 数据库连接失败
 
@@ -502,9 +752,9 @@ curl https://data-service-[hash].zeabur.app/health
 
 ## 🔗 相关文档
 
-- [Zeabur AI 自动部署指南](./ZEABUR_AI_DEPLOYMENT.md) - 🤖 AI 自动部署专用文档
-- [本地部署指南](./DEPLOYMENT.md) - 本地 Docker 部署
-- [快速开始指南](./QUICKSTART.md) - 开发环境搭建
+- [快速开始指南](./QUICKSTART.md) - 开发环境搭建和本地 Docker 部署
+- [健康检查优化方案](./docs/健康检查优化方案.md) - 健康检查优化说明
+- [健康检查优化总结](./docs/健康检查优化总结.md) - 优化效果和使用建议
 
 ---
 
@@ -529,15 +779,24 @@ curl https://data-service-[hash].zeabur.app/health
 
 ### 部署后
 
-- [ ] 所有服务健康检查通过
+- [ ] 所有服务健康检查通过（Zeabur会自动处理，首次部署可能需要更长时间）
 - [ ] 前端可以访问
 - [ ] API 请求正常
 - [ ] 数据库连接正常
 - [ ] Storage 上传正常
 - [ ] 端到端功能测试通过
 
+> 💡 **提示**：项目已优化健康检查配置，服务启动期已增加到60秒，确保服务有充足的启动时间。如果遇到启动问题，请查看服务日志排查。
+
 ---
 
-**文档版本**: v2.0  
-**最后更新**: 2026-01-16  
+**文档版本**: v3.0  
+**最后更新**: 2026-01-XX  
 **维护者**: 开发团队
+
+---
+
+> 📝 **文档更新说明**: 
+> - v3.0: 合并所有部署文档，统一到本文档
+> - v2.0: 创建完整部署指南
+> - v1.0: 初始版本

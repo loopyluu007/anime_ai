@@ -37,8 +37,8 @@ COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 # 暴露端口
 EXPOSE 80
 
-# 健康检查
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+# 健康检查（优化：增加启动期到20秒，增加重试次数）
+HEALTHCHECK --interval=30s --timeout=3s --start-period=20s --retries=5 \
   CMD wget --quiet --tries=1 --spider http://localhost/ || exit 1
 
 # 启动 Nginx

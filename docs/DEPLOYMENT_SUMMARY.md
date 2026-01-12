@@ -45,9 +45,10 @@
 - ✅ `ZEABUR_DEPLOYMENT.md` - 已整合到 `DEPLOYMENT_GUIDE.md`，已删除
 - ✅ `SUPABASE_SETUP.md` - 已整合到 `DEPLOYMENT_GUIDE.md`，已删除
 
-#### AI 部署文档（新增）
+#### 文档合并
 
-- ✅ `ZEABUR_AI_DEPLOYMENT.md` - AI 自动部署专用文档（包含所有必要信息）
+- ✅ 所有部署信息已整合到 `DEPLOYMENT_GUIDE.md`
+- ✅ `ZEABUR_AI_DEPLOYMENT.md` - 已合并到 `DEPLOYMENT_GUIDE.md`，现为重定向文档
 
 ---
 
@@ -55,9 +56,8 @@
 
 ```
 anime_ai/
-├── DEPLOYMENT_GUIDE.md              # ⭐ 完整部署指南（人类阅读）
-├── ZEABUR_AI_DEPLOYMENT.md         # 🤖 AI 自动部署指南（AI 专用）
-├── DEPLOYMENT.md                    # 本地部署指南
+├── DEPLOYMENT_GUIDE.md              # ⭐ 完整部署指南（统一文档，包含所有部署信息）
+├── QUICKSTART.md                    # 快速开始指南（本地Docker部署）
 ├── DOCKERFILE_README.md            # Dockerfile 说明（新增）
 ├── vercel.json                     # Vercel 配置（新增）
 ├── .vercelignore                   # Vercel 忽略文件（新增）

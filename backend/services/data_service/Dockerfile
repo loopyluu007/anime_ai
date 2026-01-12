@@ -32,8 +32,8 @@ ENV PYTHONPATH=/app
 # 暴露端口
 EXPOSE 8003
 
-# 健康检查
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+# 健康检查（优化：增加启动期到60秒，增加重试次数）
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
     CMD curl -f http://localhost:8003/health || exit 1
 
 # 启动命令

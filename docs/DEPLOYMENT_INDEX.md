@@ -40,19 +40,17 @@
 
 ### 🤖 AI 自动部署
 
-#### [Zeabur AI 自动部署指南](../ZEABUR_AI_DEPLOYMENT.md) ⭐ **AI 推荐**
-
 **适用场景**: 使用 Zeabur AI 自动部署后端服务
+
+**文档位置**: 使用统一的 [完整部署指南](../DEPLOYMENT_GUIDE.md)
 
 **包含内容**:
 - ✅ 完整的 Supabase 配置步骤（包含数据库迁移 SQL）
 - ✅ 4 个后端服务的详细部署步骤
-- ✅ 每个服务的环境变量清单
+- ✅ 每个服务的环境变量清单（表格形式）
 - ✅ Dockerfile 路径说明
 - ✅ 故障排查指南
-- ✅ AI 部署检查清单
-
-**推荐**: 使用 Zeabur AI 自动部署时使用
+- ✅ 部署检查清单
 
 ---
 
@@ -60,9 +58,8 @@
 
 ```
 项目根目录/
-├── DEPLOYMENT_GUIDE.md          # ⭐ 完整部署指南（推荐，人类阅读）
-├── ZEABUR_AI_DEPLOYMENT.md      # 🤖 AI 自动部署指南（AI 推荐）
-├── DEPLOYMENT.md                # 本地部署指南
+├── DEPLOYMENT_GUIDE.md          # ⭐ 完整部署指南（统一文档，包含所有部署信息）
+├── QUICKSTART.md                # 快速开始指南（本地Docker部署）
 └── docs/
     └── DEPLOYMENT_INDEX.md      # 本文档（部署文档索引）
 ```
@@ -81,11 +78,11 @@
 
 ### 场景 3: 使用 Zeabur AI 自动部署
 
-👉 **查看**: [Zeabur AI 自动部署指南](../ZEABUR_AI_DEPLOYMENT.md)
+👉 **查看**: [完整部署指南](../DEPLOYMENT_GUIDE.md) - "Zeabur 后端部署"章节
 
 ### 场景 4: 本地开发测试
 
-👉 **查看**: [本地部署指南](../DEPLOYMENT.md)
+👉 **查看**: [快速开始指南](../QUICKSTART.md) - Docker方式
 
 ---
 

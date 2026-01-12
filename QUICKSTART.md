@@ -85,7 +85,19 @@ start.bat prod
 
 ### 4. 验证服务
 
-等待所有服务启动完成后（约1-2分钟），访问：
+> ⏱️ **启动时间说明**：由于健康检查优化，应用现在有更充足的启动时间（后端服务60秒启动期）。首次启动可能需要1-3分钟，请耐心等待。
+
+等待所有服务启动完成后（约1-3分钟），可以通过以下方式检查服务状态：
+
+```bash
+# 查看所有服务状态
+docker-compose ps
+
+# 查看服务健康状态（所有服务应显示为 healthy）
+docker-compose ps --format json
+```
+
+服务启动完成后，访问：
 
 **前端应用**:
 - **Frontend**: http://localhost:8080
@@ -329,7 +341,24 @@ curl -X POST "http://localhost:8000/api/v1/auth/login" \
 **解决方案**:
 - 检查Docker和Docker Compose是否已安装并运行
 - 检查端口是否被占用（8000, 8001, 8002, 8003, 5432, 6379）
-- 查看Docker日志：`docker-compose logs`
+- 查看Docker日志：`docker-compose logs -f [service_name]`
+- 检查服务健康状态：`docker-compose ps`（查看健康检查状态）
+
+### 1.1 服务启动时间过长或健康检查失败
+
+**问题**: 服务启动时间超过预期，或健康检查失败导致容器重启
+
+**说明**: 
+- 项目已优化健康检查配置，后端服务有60秒启动期，前端有20秒启动期
+- 首次启动可能需要更长时间（数据库初始化、依赖安装等）
+- 如果启动时间超过3分钟，建议查看服务日志排查问题
+
+**解决方案**:
+- 查看服务日志：`docker-compose logs -f [service_name]`
+- 检查服务状态：`docker-compose ps`（确认健康检查状态）
+- 如果启动时间超过预期，查看日志确认是否有错误
+- 确认资源充足（CPU、内存），资源不足可能导致启动慢
+- 参考 [健康检查优化方案](./docs/健康检查优化方案.md) 了解更多信息
 
 ### 2. 数据库连接失败
 
@@ -442,8 +471,12 @@ docker-compose ps
 # 查看日志
 docker-compose logs -f                    # 所有服务
 docker-compose logs -f frontend           # 前端
-docker-compose logs -f api_gateway         # API网关
+docker-compose logs -f api_gateway        # API网关
 docker-compose logs -f agent_service      # Agent服务
+
+# 查看服务健康状态
+docker-compose ps                         # 查看所有服务状态和健康检查
+docker-compose ps --format json           # JSON格式输出（便于脚本处理）
 
 # 重新构建并启动
 docker-compose up -d --build
@@ -505,7 +538,8 @@ dart format lib/
 - [ ] 已配置所有必需的API密钥（GLM、Tuzi、Gemini）
 - [ ] 已在项目根目录创建并配置 `.env` 文件
 - [ ] 已运行统一部署脚本 `./start.sh prod` 或 `start.bat prod`
-- [ ] 所有服务可以正常启动
+- [ ] 所有服务可以正常启动（首次启动可能需要1-3分钟）
+- [ ] 所有服务健康检查通过（使用 `docker-compose ps` 检查）
 - [ ] 可以访问前端应用：http://localhost:8080
 - [ ] 可以访问API文档（Swagger UI）：http://localhost:8000/docs
 
@@ -518,6 +552,8 @@ dart format lib/
 - 📖 [统一部署指南](./DEPLOYMENT.md) - 完整的部署文档，包括生产环境配置、故障排查等
 - 📖 [后端开发文档](./backend/DEVELOPMENT.md) - 后端开发指南
 - 📖 [前端开发文档](./frontend/DEVELOPMENT.md) - 前端开发指南
+- 📖 [健康检查优化方案](./docs/健康检查优化方案.md) - 健康检查优化说明
+- 📖 [健康检查优化总结](./docs/健康检查优化总结.md) - 优化效果和使用建议
 
 ### 外部资源
 
