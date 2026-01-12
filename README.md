@@ -116,19 +116,43 @@ lib/
 
 ## 🚀 快速开始
 
-### 环境要求
+### 方式一：Docker 一键部署（推荐）
 
-- Flutter SDK >= 3.0.0
-- Dart SDK >= 3.0.0
-- Android Studio / VS Code
-- Android 设备或模拟器
-
-### 安装步骤
+> 使用统一部署脚本，一键启动前后端所有服务
 
 1. **克隆项目**
    ```bash
    git clone <repository-url>
-   cd director_ai
+   cd anime_ai
+   ```
+
+2. **配置环境变量**
+   ```bash
+   cp .env.example .env
+   # 编辑 .env 文件，配置 API 密钥
+   ```
+
+3. **启动所有服务**
+   ```bash
+   # Linux/Mac
+   ./start.sh prod
+   
+   # Windows
+   start.bat prod
+   ```
+
+4. **访问应用**
+   - 前端：http://localhost:8080
+   - API 文档：http://localhost:8000/docs
+
+详细部署说明请查看 [快速开始指南](./QUICKSTART.md) 和 [部署文档](./DEPLOYMENT.md)
+
+### 方式二：手动启动（开发环境）
+
+1. **克隆项目**
+   ```bash
+   git clone <repository-url>
+   cd anime_ai
    ```
 
 2. **安装依赖**
@@ -149,6 +173,8 @@ lib/
    ```bash
    flutter run
    ```
+
+详细步骤请查看 [快速开始指南](./QUICKSTART.md)
 
 ## 📦 依赖说明
 

@@ -725,27 +725,47 @@ curl -X POST "http://localhost:8000/api/v1/auth/login" \
 
 ## 📝 快速命令参考
 
-### Docker命令
+### 统一部署脚本（推荐）
 
 ```bash
+# 在项目根目录执行
+
 # 启动所有服务（生产环境）
-cd backend/infrastructure/docker
 ./start.sh prod        # Linux/Mac
 start.bat prod         # Windows
 
+# 启动特定组件
+./start.sh prod frontend    # 只启动前端
+./start.sh prod backend     # 只启动后端
+./start.sh prod all         # 启动所有（默认）
+
 # 启动基础设施（开发环境）
-./start.sh dev         # Linux/Mac
-start.bat dev          # Windows
+./start.sh dev              # Linux/Mac
+start.bat dev               # Windows
 
 # 停止服务
-./stop.sh [dev|prod]   # Linux/Mac
-stop.bat [dev|prod]    # Windows
+./stop.sh                   # 停止所有服务
+./stop.sh frontend          # 只停止前端
+./stop.sh backend           # 只停止后端
+stop.bat                    # Windows
+
+# 查看服务状态
+docker-compose ps
 
 # 查看日志
-docker-compose logs -f
+docker-compose logs -f                    # 所有服务
+docker-compose logs -f frontend           # 前端
+docker-compose logs -f api_gateway         # API网关
+docker-compose logs -f agent_service      # Agent服务
+
+# 重新构建并启动
+docker-compose up -d --build
+
+# 重启服务
+docker-compose restart [service_name]
 ```
 
-### 前端 Docker 命令
+### 前端 Docker 命令（独立部署）
 
 ```bash
 # 在项目根目录执行
@@ -813,16 +833,16 @@ dart format lib/
 
 在开始开发前，请确认：
 
-- [ ] Python 3.11+ 已安装
-- [ ] Flutter 3.0+ 已安装
-- [ ] Docker 和 Docker Compose 已安装（如使用Docker方式）
-- [ ] PostgreSQL 和 Redis 已安装（如手动启动）
+- [ ] Python 3.11+ 已安装（手动启动时需要）
+- [ ] Flutter 3.0+ 已安装（手动启动时需要）
+- [ ] Docker 和 Docker Compose 已安装（推荐使用Docker方式）
+- [ ] PostgreSQL 和 Redis 已安装（仅手动启动时需要）
 - [ ] 已配置所有必需的API密钥（GLM、Tuzi、Gemini）
-- [ ] 已创建并配置 `.env` 文件
-- [ ] 数据库已初始化
+- [ ] 已在项目根目录创建并配置 `.env` 文件
+- [ ] 已运行统一部署脚本 `./start.sh prod` 或 `start.bat prod`
 - [ ] 所有服务可以正常启动
-- [ ] 可以访问API文档（Swagger UI）
-- [ ] 前端应用可以正常启动
+- [ ] 可以访问前端应用：http://localhost:8080
+- [ ] 可以访问API文档（Swagger UI）：http://localhost:8000/docs
 
 ---
 
@@ -834,6 +854,14 @@ dart format lib/
 
 ---
 
-**文档版本**: v2.0  
-**最后更新**: 2026-01-15  
+**文档版本**: v2.1  
+**最后更新**: 2026-01-16  
 **维护者**: 开发团队
+
+---
+
+## 📚 相关部署文档
+
+- 📖 [统一部署指南](./DEPLOYMENT.md) - 详细的部署说明和配置选项
+- 📖 [后端开发文档](./backend/DEVELOPMENT.md) - 后端开发指南
+- 📖 [前端开发文档](./frontend/DEVELOPMENT.md) - 前端开发指南
