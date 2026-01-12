@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/models/task.dart';
-import '../../../shared/utils/date_utils.dart';
+import '../../../shared/utils/date_utils.dart' as date_utils;
 
 /// 任务卡片组件
 class TaskCard extends StatelessWidget {
@@ -110,7 +110,7 @@ class TaskCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    DateUtils.formatRelativeTime(task.createdAt),
+                    date_utils.AppDateUtils.formatRelativeTime(task.createdAt),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: Colors.grey[600],
                     ),

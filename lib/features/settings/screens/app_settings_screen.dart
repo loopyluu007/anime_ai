@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/settings_provider.dart' show SettingsProvider, AppThemeMode, AppLanguage;
 import '../widgets/settings_tile.dart';
-import '../widgets/settings_switch_tile.dart';
 
 /// 应用设置页面
 class AppSettingsScreen extends StatelessWidget {

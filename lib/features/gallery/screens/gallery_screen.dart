@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/gallery_provider.dart';
 import '../widgets/media_grid.dart';
-import '../../../core/api/media_client.dart';
+import '../../../core/api/media_client.dart' show ImageInfo, VideoInfo, MediaFile;
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_widget.dart' as error_widget;
 import '../../../shared/widgets/loading_indicator.dart';

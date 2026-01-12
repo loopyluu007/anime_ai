@@ -7,9 +7,9 @@ import '../models/message.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/message_input.dart';
 import '../widgets/screenplay_card.dart';
-import '../../core/api/api_client.dart';
-import '../../core/api/conversation_client.dart';
-import '../../core/storage/local_storage.dart';
+import '../../../core/api/api_client.dart';
+import '../../../core/api/conversation_client.dart';
+import '../../../core/storage/local_storage.dart';
 
 /// 聊天界面
 class ChatScreen extends StatefulWidget {

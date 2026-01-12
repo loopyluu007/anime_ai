@@ -4,7 +4,7 @@ import '../providers/task_provider.dart';
 import '../widgets/task_progress_widget.dart';
 import '../../../core/models/task.dart';
 import '../../../shared/widgets/loading_indicator.dart';
-import '../../../shared/widgets/error_widget.dart';
+import '../../../shared/widgets/error_widget.dart' as error_widget;
 import '../../../shared/utils/date_utils.dart' as date_utils;
 
 /// 任务详情界面
@@ -108,7 +108,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
           // 错误状态
           if (provider.error != null && provider.currentTask == null) {
-            return ErrorWidget(
+            return error_widget.AppErrorWidget(
               message: provider.error!,
               onRetry: () {
                 provider.clearError();

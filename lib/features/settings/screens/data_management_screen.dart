@@ -70,7 +70,7 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
           if (entity is io.File) {
             try {
               final length = await entity.length();
-              totalSize += length.toInt();
+              totalSize += length is int ? length : length.toInt();
             } catch (_) {
               // 忽略无法读取的文件
             }
@@ -98,7 +98,8 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
       }
       
       final appDir = await getApplicationDocumentsDirectory();
-      final hiveDir = io.Directory(path.join(appDir.path, 'hive_db'));
+      final hiveDirPath = path.join(appDir.path, 'hive_db');
+      final hiveDir = io.Directory(hiveDirPath);
       
       if (!await hiveDir.exists()) {
         return 0;
@@ -109,7 +110,7 @@ class _DataManagementScreenState extends State<DataManagementScreen> {
         if (entity is io.File) {
           try {
             final length = await entity.length();
-            totalSize += length.toInt();
+            totalSize += length is int ? length : length.toInt();
           } catch (_) {
             // 忽略无法读取的文件
           }

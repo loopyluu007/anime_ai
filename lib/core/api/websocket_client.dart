@@ -184,7 +184,7 @@ class WebSocketClient {
   /// 订阅频道
   void subscribe(String channel, {String? taskId, String? conversationId}) {
     if (!isConnected) {
-      Logger.warn('WebSocket 未连接，无法订阅频道');
+      Logger.warning('WebSocket 未连接，无法订阅频道');
       return;
     }
 
