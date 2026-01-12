@@ -466,10 +466,14 @@ WS_URL=wss://api-gateway-[hash].zeabur.app/ws
 
 项目根目录已包含 `vercel.json` 配置文件，Vercel 会自动识别：
 
-- ✅ Flutter Web 构建配置
-- ✅ SPA 路由重写规则
+- ✅ SPA 路由重写规则（所有路由返回 index.html，支持 Flutter Web 路由）
 - ✅ 安全头配置
 - ✅ 静态资源缓存策略
+
+**重要**: 如果部署后遇到 404 错误，请检查：
+1. `vercel.json` 文件是否存在且配置正确
+2. Vercel 项目设置中的 "Output Directory" 是否设置为 `build/web`
+3. "Build Command" 是否设置为 `flutter build web --release`
 
 ---
 
@@ -711,6 +715,52 @@ curl https://data-service-[hash].zeabur.app/health
 2. 在 API Gateway 中配置 `CORS_ORIGINS`
 3. 确认 API Gateway 正常运行
 4. 检查浏览器控制台错误信息
+
+### Vercel 部署后显示 404
+
+**问题**: Vercel 部署成功，但访问显示 404 错误
+
+**原因**: Flutter Web 是 SPA（单页应用），需要配置路由重写规则
+
+**解决**:
+1. ✅ **确认 `vercel.json` 文件存在**（项目根目录）
+   - 文件应该包含 `rewrites` 配置，将所有路由重写到 `/index.html`
+   
+2. **检查 Vercel 项目设置**:
+   - 进入 Vercel Dashboard → 项目设置
+   - **Framework Preset**: 选择 "Other" 或 "Flutter"
+   - **Root Directory**: 留空（项目根目录）
+   - **Build Command**: `flutter build web --release`
+   - **Output Directory**: `build/web`
+   - **Install Command**: `flutter pub get`（可选）
+
+3. **重新部署**:
+   - 在 Vercel Dashboard 中点击 "Redeploy"
+   - 或推送代码到 GitHub 触发自动部署
+
+4. **验证 `vercel.json` 配置**:
+   确保文件内容包含：
+   ```json
+   {
+     "version": 2,
+     "rewrites": [
+       {
+         "source": "/(.*)",
+         "destination": "/index.html"
+       }
+     ]
+   }
+   ```
+
+5. **检查构建日志**:
+   - 在 Vercel Dashboard 中查看构建日志
+   - 确认 `build/web` 目录中有 `index.html` 文件
+   - 确认构建成功完成
+
+6. **如果仍然 404**:
+   - 清除浏览器缓存并刷新
+   - 尝试无痕模式访问
+   - 检查 Vercel 部署日志中的错误信息
 
 ### Storage 上传失败
 
