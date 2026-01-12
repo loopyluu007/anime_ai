@@ -443,22 +443,16 @@ DATA_SERVICE_URL=https://data-service-[hash].zeabur.app
 
 ⚠️ **重要**: Vercel 默认不支持 Flutter，需要手动配置构建环境。
 
-**方案一：使用构建脚本（推荐）**
+**⚠️ 重要发现**：`.vercelignore` 文件中排除了 `scripts/` 目录，导致脚本在 Vercel 环境中不存在！
 
-1. **Framework Preset**: 选择 "Other"
-2. **Root Directory**: 留空（项目根目录）
-3. **Install Command**: 
-   ```bash
-   chmod +x scripts/vercel_build.sh && scripts/vercel_build.sh
-   ```
-4. **Build Command**: 
-   ```bash
-   echo "Build completed in install step"
-   ```
-   或者留空（因为构建已经在 Install Command 中完成）
-5. **Output Directory**: `build/web`
+**推荐方案：使用单行命令（不使用脚本）**
 
-**方案二：使用单行命令（如果脚本不工作）**
+不使用脚本的原因是：
+1. `.vercelignore` 排除了 `scripts/` 目录
+2. 脚本文件在 Vercel 构建环境中不存在
+3. 单行命令更简单、更可靠
+
+**配置步骤**：
 
 1. **Framework Preset**: 选择 "Other"
 2. **Root Directory**: 留空
@@ -746,28 +740,41 @@ curl https://data-service-[hash].zeabur.app/health
 3. 确认 API Gateway 正常运行
 4. 检查浏览器控制台错误信息
 
-### Vercel 构建失败：Flutter 命令未找到
+### Vercel 构建失败：脚本命令退出代码 1
 
-**问题**: `sh: line 1: flutter: command not found` 或 `Error: Command "flutter build web --release" exited with 127`
+**问题**: `Error: Command "chmod +x scripts/vercel_build.sh && scripts/vercel_build.sh" exited with 1`
 
-**原因**: Vercel 默认不支持 Flutter，需要在构建时安装 Flutter SDK
+**根本原因**: **`.vercelignore` 文件排除了 `scripts/` 目录**，脚本文件在 Vercel 构建环境中不存在！
 
 **解决方案**:
 
-#### 方案一：使用构建脚本（推荐）
+#### 推荐方案：使用单行命令（不使用脚本）
 
-1. **在 Vercel Dashboard 中配置**:
-   - **Framework Preset**: "Other"
-   - **Root Directory**: 留空
-   - **Install Command**: `chmod +x scripts/vercel_build.sh && scripts/vercel_build.sh`
-   - **Build Command**: `echo "Build completed in install step"` 或留空
-   - **Output Directory**: `build/web`
+⚠️ **原因**：`.vercelignore` 文件排除了 `scripts/` 目录，脚本文件在 Vercel 环境中不存在。
 
-2. **重新部署**
+**在 Vercel Dashboard 中配置**:
+1. **Framework Preset**: "Other"
+2. **Root Directory**: 留空
+3. **Install Command**: 
+   ```bash
+   if [ -d "flutter" ]; then cd flutter && git pull && cd ..; else git clone https://github.com/flutter/flutter.git -b stable --depth 1; fi && export PATH="$PATH:$(pwd)/flutter/bin" && flutter config --enable-web && flutter pub get
+   ```
+4. **Build Command**: 
+   ```bash
+   export PATH="$PATH:$(pwd)/flutter/bin" && flutter build web --release
+   ```
+5. **Output Directory**: `build/web`
 
-#### 方案二：使用单行命令
+**重新部署**
 
-如果脚本不工作，使用以下配置：
+#### 为什么脚本会失败？
+
+- `.vercelignore` 中排除了 `scripts/` 目录
+- Vercel 构建环境不包含脚本文件
+- `chmod +x scripts/vercel_build.sh` 失败（文件不存在）
+- 单行命令不依赖文件，直接在命令中执行，更可靠
+
+#### 替代方案：使用 GitHub Actions（如果 Vercel 构建一直失败）
 
 - **Install Command**: 
   ```bash

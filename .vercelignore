@@ -7,7 +7,7 @@ backend/
 tests/
 # 文档
 docs/
-# 脚本
+# 脚本（Vercel 构建不依赖脚本，使用单行命令）
 scripts/
 # Android/iOS 配置
 android/
