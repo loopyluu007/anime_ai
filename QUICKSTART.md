@@ -40,9 +40,9 @@
 
 ---
 
-## 🐳 快速启动（Docker方式）
+## 🐳 快速启动（Docker方式 - 推荐）
 
-> **推荐方式**：使用 Docker 可以快速启动所有服务，无需手动配置环境。
+> **推荐方式**：使用项目根目录的统一部署脚本，一键启动前后端所有服务，无需手动配置环境。
 
 ### 1. 克隆项目
 
@@ -54,9 +54,7 @@ cd anime_ai
 ### 2. 配置环境变量
 
 ```bash
-# 进入backend目录
-cd backend
-
+# 在项目根目录
 # 复制环境变量模板
 cp .env.example .env
 
@@ -68,11 +66,10 @@ cp .env.example .env
 # - SECRET_KEY=your-secret-key-change-in-production
 ```
 
-### 3. 启动所有服务
+### 3. 启动所有服务（一键部署）
 
 ```bash
-# 进入Docker配置目录
-cd infrastructure/docker
+# 在项目根目录执行
 
 # Linux/Mac
 ./start.sh prod
@@ -81,36 +78,60 @@ cd infrastructure/docker
 start.bat prod
 ```
 
+这将自动启动：
+- ✅ 前端服务（Flutter Web）- http://localhost:8080
+- ✅ 后端服务（API Gateway + 所有微服务）
+- ✅ 基础设施（PostgreSQL、Redis、MinIO）
+
 ### 4. 验证服务
 
 等待所有服务启动完成后（约1-2分钟），访问：
 
+**前端应用**:
+- **Frontend**: http://localhost:8080
+
+**后端服务**:
 - **API Gateway**: http://localhost:8000/docs
 - **Agent Service**: http://localhost:8001/docs
 - **Media Service**: http://localhost:8002/docs
 - **Data Service**: http://localhost:8003/docs
 
-### 5. 启动前端
+**基础设施**:
+- **MinIO Console**: http://localhost:9001
+- **PostgreSQL**: localhost:5432
+- **Redis**: localhost:6379
+
+### 5. 停止服务
 
 ```bash
-# 返回项目根目录
-cd ../../..
+# Linux/Mac
+./stop.sh
 
-# 安装依赖
-flutter pub get
+# Windows
+stop.bat
+```
 
-# 启动Web端
-flutter run -d chrome
+### 6. 其他启动选项
 
-# 或启动移动端（需要Android/iOS设备或模拟器）
-flutter run -d android
+```bash
+# 只启动前端
+./start.sh prod frontend    # Linux/Mac
+start.bat prod frontend     # Windows
+
+# 只启动后端
+./start.sh prod backend     # Linux/Mac
+start.bat prod backend      # Windows
+
+# 开发环境（只启动基础设施：数据库、Redis、MinIO）
+./start.sh dev              # Linux/Mac
+start.bat dev               # Windows
 ```
 
 ---
 
-## 🐳 前端 Docker 部署
+## 🐳 前端 Docker 部署（独立部署）
 
-> **推荐方式**：使用 Docker 可以快速部署前端应用，无需手动配置 Flutter 环境。
+> **注意**：推荐使用统一部署脚本 `./start.sh prod`，如需单独部署前端，可使用以下方式。
 
 ### 前置要求
 
@@ -122,10 +143,14 @@ flutter run -d android
 ```bash
 # 在项目根目录执行
 
-# 使用 Docker Compose（推荐）
+# 方式1：使用统一脚本（推荐）
+./start.sh prod frontend    # Linux/Mac
+start.bat prod frontend     # Windows
+
+# 方式2：使用 Docker Compose
 docker-compose -f frontend/docker-compose.yml up -d
 
-# 或使用 Docker 命令
+# 方式3：使用 Docker 命令
 docker build -t director-ai-frontend -f frontend/Dockerfile .
 docker run -d -p 8080:80 --name director-ai-frontend director-ai-frontend
 ```
@@ -490,10 +515,10 @@ GEMINI_API_KEY=your-gemini-api-key
 **方式1：使用Docker启动基础设施（推荐）**
 
 ```bash
-cd infrastructure/docker
+# 在项目根目录执行
 # 仅启动PostgreSQL、Redis、MinIO
 ./start.sh dev  # Linux/Mac
-start.bat dev    # Windows
+start.bat dev   # Windows
 ```
 
 然后分别启动各个服务：
