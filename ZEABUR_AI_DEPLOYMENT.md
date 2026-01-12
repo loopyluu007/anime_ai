@@ -587,6 +587,8 @@ https://api-gateway-[hash].zeabur.app/docs
 
 ## 🐛 故障排查
 
+> **🤖 Zeabur AI 参考**: 如果部署遇到问题，参考以下解决方案
+
 ### 问题 1: 服务无法启动
 
 **症状**: Zeabur 部署失败或服务无法启动
