@@ -14,9 +14,9 @@ class Navigator {
 }
 
 /// Stub for html library - provides window property
-class _HtmlStub {
+class HtmlStub {
   final Window window = Window();
 }
 
 /// Stub html object - actual implementations will never be called on non-web platforms
-final _HtmlStub html = _HtmlStub();
+final HtmlStub html = HtmlStub();

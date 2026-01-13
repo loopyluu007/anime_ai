@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../web/adapters/clipboard_adapter.dart';
 // 条件导入：Web端使用dart:html，非Web端使用stub
-import 'package:director_ai/web/stubs/html_stub.dart' as html if (dart.library.html) 'dart:html' as html;
+import 'package:director_ai/web/stubs/html_stub.dart' if (dart.library.html) 'dart:html' as html;
 
 /// 分享服务
 /// 

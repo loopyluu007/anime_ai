@@ -62,7 +62,7 @@ class DownloadService {
   }
 
   /// 获取下载目录
-  Future<Directory> _getDownloadDirectory() async {
+  Future<io.Directory> _getDownloadDirectory() async {
     if (kIsWeb) {
       throw UnsupportedError('Web端不支持本地文件系统');
     }
@@ -74,7 +74,7 @@ class DownloadService {
         // 使用 path_provider 的 getApplicationDocumentsDirectory 返回的 Directory
         final appDir = await getApplicationDocumentsDirectory();
         // 创建下载子目录
-        final downloadDir = Directory('${appDir.path}/Download');
+        final downloadDir = io.Directory('${appDir.path}/Download');
         if (!await downloadDir.exists()) {
           await downloadDir.create(recursive: true);
         }
